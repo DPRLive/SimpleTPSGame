@@ -69,6 +69,7 @@ void UTPSPlayerFireComponent::Fire()
 {
 	if (Mag <= 0) return;
 	Mag--;
+
 	FVector StartPos = Player->CameraComp->GetComponentLocation();
 	FVector DestActorPos = Player->CameraComp->GetForwardVector() * 15000; // 150m까지는 잘 쏨
 	FHitResult Result;

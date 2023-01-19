@@ -5,6 +5,8 @@
 #include <GameFramework/ProjectileMovementComponent.h>
 #include <Components/SphereComponent.h>
 #include <Components/StaticMeshComponent.h>
+#include "EnemyFSM.h"
+#include "Enemy.h"
 
 ABullet::ABullet()
 {
@@ -52,7 +54,11 @@ void ABullet::OnBulletBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		
 		if (PresetName.Compare(FName(TEXT("Enemy")))) // 상대 프리셋이 Enemy면 삭제해버림
 		{
-			OtherActor->Destroy();
+			auto Enemy = Cast<AEnemy>(OtherActor);
+			if (Enemy != nullptr)
+			{
+				Enemy->FSM->OnAttackDamage(1000);
+			}
 		}
 		Destroy();
 	}

@@ -6,11 +6,18 @@
 #include "TPSPlayerFireComponent.h"
 #include <GameFramework/SpringArmComponent.h>
 #include <Camera/CameraComponent.h>
+#include <Components/CapsuleComponent.h>
 
 ATPSPlayer::ATPSPlayer()
 {
 	// 컴포넌트로 움직일거라서 false
 	PrimaryActorTick.bCanEverTick = false;
+
+	auto Collision = Cast<UCapsuleComponent>(RootComponent);
+	if (Collision != nullptr)
+	{
+		Collision->SetCollisionProfileName(TEXT("Player"));
+	}
 
 	// SpringArmComponent 설정
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
