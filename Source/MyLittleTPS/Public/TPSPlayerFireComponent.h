@@ -10,7 +10,7 @@
  * 
  */
 UENUM(BlueprintType) 
-enum class EFireState : uint8
+enum class EGunState : uint8
 {
 	Idle,
 	Fire,
@@ -30,7 +30,10 @@ public:
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void BeginPlay() override;
 	// ÃÑ »óÅÂ °ü¸®
-	EFireState FireState = EFireState::Idle;
+	EGunState GunState;
+
+	void FireState();
+	void ReloadState();
 
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
 		TSubclassOf<class ABullet> BulletFactory;
@@ -53,5 +56,4 @@ public:
 		uint8 MaxMag = 30;
 
 	uint8 Mag;
-	void Reload();
 };

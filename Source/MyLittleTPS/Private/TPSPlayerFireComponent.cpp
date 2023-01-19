@@ -17,38 +17,50 @@ void UTPSPlayerFireComponent::SetupPlayerInput(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &UTPSPlayerFireComponent::InputFire);
 	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Released, this, &UTPSPlayerFireComponent::StopFire);
 	PlayerInputComponent->BindAction(TEXT("SwapAutoFire"), IE_Released, this, &UTPSPlayerFireComponent::SwapAutoFire);
-	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Released, this, &UTPSPlayerFireComponent::Reload);
+	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Released, this, &UTPSPlayerFireComponent::ReloadState);
 }
 
 void UTPSPlayerFireComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
 	CurrentTime += DeltaTime;
-	if (IsAutoFire && (FireState == EFireState::Fire))
+
+	switch (GunState)
 	{
-		if (CurrentTime >= (1 / FirePerSeconds))
-		{
-			Fire();
-			CurrentTime = 0;
-		}
+	case EGunState::Idle:
+		break;
+	case EGunState::Fire:
+		FireState();
+		break;
+	case EGunState::Reload:
+		ReloadState();
+		break;
 	}
 }
 
 void UTPSPlayerFireComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GunState = EGunState::Idle;
 	Mag = MaxMag;
+}
+
+void UTPSPlayerFireComponent::FireState()
+{
+	if (IsAutoFire) // 연사면 계속 발사
+	{
+		Fire();
+	}
 }
 
 void UTPSPlayerFireComponent::InputFire()
 {
-	if (FireState != EFireState::Idle) return;
-	if (CurrentTime >= (1 / FirePerSeconds))
-	{
-		Fire();
-		CurrentTime = 0;
-		FireState = EFireState::Fire;
-	}
+	if (GunState != EGunState::Idle) return;
+	Fire();
+	GunState = EGunState::Fire;
+
 	// 타이머 연사
 	//Fire();
 	//if (IsAutoFire)
@@ -60,34 +72,38 @@ void UTPSPlayerFireComponent::InputFire()
 
 void UTPSPlayerFireComponent::StopFire()
 {
-	FireState = EFireState::Idle;
+	GunState = EGunState::Idle;
 	// 타이머 연사
 	// GetWorld()->GetTimerManager().ClearTimer(FireTimer);
 }
 
 void UTPSPlayerFireComponent::Fire()
 {
-	if (Mag <= 0) return;
-	Mag--;
-
-	FVector StartPos = Player->CameraComp->GetComponentLocation();
-	FVector DestActorPos = Player->CameraComp->GetForwardVector() * 15000; // 150m까지는 잘 쏨
-	FHitResult Result;
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(Player); // 내가 내총에 맞을수는 없지
-
-	// 50m 이내에 물체를 조준했다면 거기를 목표로 조준
-	bool bHit = GetWorld()->LineTraceSingleByChannel(Result, StartPos, DestActorPos, ECollisionChannel::ECC_Visibility);
-	if (bHit)
+	if (CurrentTime >= (1 / FirePerSeconds))
 	{
-		DestActorPos = Result.Location;
-	}
+		if (Mag <= 0) return;
+		Mag--;
 
-	// 총을 발사할 전방방향 계산
-	FTransform BulletTrans = Player->GunMesh->GetSocketTransform(TEXT("FirePosition"));
-	if (FVector::Distance(StartPos, DestActorPos) > 1000.f) // 너무 가까이 쏘면 이상하니까 가까울땐 그냥 총구 전방 방향으로 발사
-		BulletTrans.SetRotation(FQuat(UKismetMathLibrary::FindLookAtRotation(BulletTrans.GetLocation(), DestActorPos)));
-	GetWorld()->SpawnActor<ABullet>(BulletFactory, BulletTrans);
+		FVector StartPos = Player->CameraComp->GetComponentLocation();
+		FVector DestActorPos = Player->CameraComp->GetForwardVector() * 15000; // 150m까지는 잘 쏨
+		FHitResult Result;
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(Player); // 내가 내총에 맞을수는 없지
+
+		// 50m 이내에 물체를 조준했다면 거기를 목표로 조준
+		bool bHit = GetWorld()->LineTraceSingleByChannel(Result, StartPos, DestActorPos, ECollisionChannel::ECC_Visibility);
+		if (bHit)
+		{
+			DestActorPos = Result.Location;
+		}
+
+		// 총을 발사할 전방방향 계산
+		FTransform BulletTrans = Player->GunMesh->GetSocketTransform(TEXT("FirePosition"));
+		if (FVector::Distance(StartPos, DestActorPos) > 1000.f) // 너무 가까이 쏘면 이상하니까 가까울땐 그냥 총구 전방 방향으로 발사
+			BulletTrans.SetRotation(FQuat(UKismetMathLibrary::FindLookAtRotation(BulletTrans.GetLocation(), DestActorPos)));
+		GetWorld()->SpawnActor<ABullet>(BulletFactory, BulletTrans);
+		CurrentTime = 0;
+	}
 }
 
 void UTPSPlayerFireComponent::SwapAutoFire()
@@ -95,11 +111,12 @@ void UTPSPlayerFireComponent::SwapAutoFire()
 	IsAutoFire = !IsAutoFire;
 }
 
-void UTPSPlayerFireComponent::Reload()
+void UTPSPlayerFireComponent::ReloadState()
 {
-	FireState = EFireState::Reload;
-	// Reload Animation Play
-	// 임시, 추후 Anim Notify로 장전 모션 끝나면 장전 시킬 예정
+	if (GunState != EGunState::Idle) return;
+	GunState = EGunState::Reload;
+	// Reload Animation Play 장전모션 끝났는지 체크 필요함
+	// 임시, 추후 Anim Notify로 장전 모션 끝나면 장전 시킬 예정,
 	Mag = MaxMag;
-	FireState = EFireState::Idle;
+	GunState = EGunState::Idle;
 }
