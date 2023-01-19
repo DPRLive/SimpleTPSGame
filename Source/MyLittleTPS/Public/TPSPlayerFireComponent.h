@@ -56,4 +56,8 @@ public:
 		uint8 MaxMag = 30;
 
 	uint8 Mag;
+
+	// ¡‹¿Œ / ¡‹æ∆øÙ
+	bool IsZoom;
+	void Zoom();
 };

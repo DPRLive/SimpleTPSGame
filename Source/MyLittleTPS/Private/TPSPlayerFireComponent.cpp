@@ -16,8 +16,10 @@ void UTPSPlayerFireComponent::SetupPlayerInput(UInputComponent* PlayerInputCompo
 {
 	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &UTPSPlayerFireComponent::InputFire);
 	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Released, this, &UTPSPlayerFireComponent::StopFire);
-	PlayerInputComponent->BindAction(TEXT("SwapAutoFire"), IE_Released, this, &UTPSPlayerFireComponent::SwapAutoFire);
-	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Released, this, &UTPSPlayerFireComponent::ReloadState);
+	PlayerInputComponent->BindAction(TEXT("SwapAutoFire"), IE_Pressed, this, &UTPSPlayerFireComponent::SwapAutoFire);
+	PlayerInputComponent->BindAction(TEXT("Reload"), IE_Pressed, this, &UTPSPlayerFireComponent::ReloadState);
+	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Pressed, this, &UTPSPlayerFireComponent::Zoom);
+	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Released, this, &UTPSPlayerFireComponent::Zoom);
 }
 
 void UTPSPlayerFireComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -37,6 +39,11 @@ void UTPSPlayerFireComponent::TickComponent(float DeltaTime, enum ELevelTick Tic
 		ReloadState();
 		break;
 	}
+
+	// zoom in / zoom out
+	float TargetFov = IsZoom ? 60.f : 90.f;
+	float NewFov = FMath::FInterpTo(Player->CameraComp->FieldOfView, TargetFov, DeltaTime, 20.f);
+	Player->CameraComp->FieldOfView = NewFov;
 }
 
 void UTPSPlayerFireComponent::BeginPlay()
@@ -45,6 +52,7 @@ void UTPSPlayerFireComponent::BeginPlay()
 
 	GunState = EGunState::Idle;
 	Mag = MaxMag;
+	IsZoom = false;
 }
 
 void UTPSPlayerFireComponent::FireState()
@@ -53,6 +61,16 @@ void UTPSPlayerFireComponent::FireState()
 	{
 		Fire();
 	}
+}
+
+void UTPSPlayerFireComponent::ReloadState()
+{
+	if (GunState != EGunState::Idle) return;
+	GunState = EGunState::Reload;
+	// Reload Animation Play 장전모션 끝났는지 체크 필요함
+	// 임시, 추후 Anim Notify로 장전 모션 끝나면 장전 시킬 예정,
+	Mag = MaxMag;
+	GunState = EGunState::Idle;
 }
 
 void UTPSPlayerFireComponent::InputFire()
@@ -111,12 +129,7 @@ void UTPSPlayerFireComponent::SwapAutoFire()
 	IsAutoFire = !IsAutoFire;
 }
 
-void UTPSPlayerFireComponent::ReloadState()
+void UTPSPlayerFireComponent::Zoom()
 {
-	if (GunState != EGunState::Idle) return;
-	GunState = EGunState::Reload;
-	// Reload Animation Play 장전모션 끝났는지 체크 필요함
-	// 임시, 추후 Anim Notify로 장전 모션 끝나면 장전 시킬 예정,
-	Mag = MaxMag;
-	GunState = EGunState::Idle;
+	IsZoom = !IsZoom;
 }
