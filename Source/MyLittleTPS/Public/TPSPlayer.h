@@ -27,6 +27,12 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(EditDefaultsOnly, Category = Settings)
+		float MaxHp = 1000;
+
+	UPROPERTY(VisibleAnywhere, Category = Settings)
+		float Hp;
+
 	// 카메라
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		class USpringArmComponent* SpringArmComp;
@@ -44,5 +50,9 @@ public:
 
 	// 총알 발사 담당 컴포넌트
 	UPROPERTY(VisibleAnywhere, Category = PlayerComponent)
-		class UTPSPlayerFireComponent* FireComp;
+		class UTPSPlayerBaseComponent* FireComp;
+
+	// 스킬 담당 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = PlayerComponent)
+		class UTPSPlayerBaseComponent* SkillComp;
 };

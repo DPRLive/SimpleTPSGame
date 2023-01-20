@@ -25,6 +25,7 @@ AEnemy::AEnemy()
 
 	FSM = CreateDefaultSubobject<UEnemyFSM>(TEXT("FSM"));
 
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned; // 스폰 또는 월드 배치시 AIContoller 자동 pose
 }
 
 void AEnemy::BeginPlay()

@@ -4,6 +4,7 @@
 #include "TPSPlayer.h"
 #include "TPSPlayerMoveComponent.h"
 #include "TPSPlayerFireComponent.h"
+#include "TPSPlayerSkillComponent.h"
 #include <GameFramework/SpringArmComponent.h>
 #include <Camera/CameraComponent.h>
 #include <Components/CapsuleComponent.h>
@@ -55,6 +56,8 @@ ATPSPlayer::ATPSPlayer()
 	MoveComp = CreateDefaultSubobject<UTPSPlayerMoveComponent>(TEXT("MoveComp"));
 	// 총알 발사 담당 컴포넌트 소유
 	FireComp = CreateDefaultSubobject<UTPSPlayerFireComponent>(TEXT("FireComp"));
+	// 스킬 담당 컴포넌트 소유
+	SkillComp = CreateDefaultSubobject<UTPSPlayerSkillComponent>(TEXT("SkillComp"));
 
 	// 점프 두번해 ^^
 	JumpMaxCount = 2;
@@ -64,7 +67,7 @@ void ATPSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
-
+	Hp = MaxHp;
 }
 
 void ATPSPlayer::Tick(float DeltaTime)
