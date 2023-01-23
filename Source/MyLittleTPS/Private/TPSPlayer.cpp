@@ -68,6 +68,7 @@ void ATPSPlayer::BeginPlay()
 	Super::BeginPlay();
 	
 	Hp = MaxHp;
+	Item = nullptr;
 }
 
 void ATPSPlayer::Tick(float DeltaTime)

@@ -16,7 +16,6 @@ AEnergyShootSkill::AEnergyShootSkill()
 	SkillRangeCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("SkillRangeCollision"));
 	SkillRangeCollision->SetCollisionProfileName(TEXT("Skill"));
 	SkillRangeCollision->SetBoxExtent(FVector(32.f, 300.f, 32.f));
-	SkillRangeCollision->bHiddenInGame = false;
 	SetRootComponent(SkillRangeCollision);
 
 	MoveComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MoveComp"));

@@ -55,4 +55,7 @@ public:
 	// 스킬 담당 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = PlayerComponent)
 		class UTPSPlayerBaseComponent* SkillComp;
+
+	// 아이템 포인터
+	TWeakObjectPtr<class Item> Item;
 };
