@@ -35,26 +35,27 @@ void AItem::Tick(float DeltaTime)
 
 void AItem::AddBall()
 {
-	if (NowBallCount >= 5) return;
-	
-	// 새로운 각도에 따른 공 배치를 위해 기존 공들 다 지워버림
-	TArray<USceneComponent*> ChildArray;
-	RootComponent->GetChildrenComponents(true, ChildArray);
-	for (auto elem : ChildArray) elem->DestroyComponent();
-	
-	NowBallCount++;
-	FVector Forward = GetActorForwardVector().GetSafeNormal();
-
-	// 공 갯수로 나눠서 각 공들 사이의 각을 구함
-	float Angle;
-	if (NowBallCount == 0) Angle = 0;
-	else Angle = 360.f / NowBallCount;
-
-	for (uint8 i = 0; i < NowBallCount; i++)
+	if (NowBallCount < 5)
 	{
-		// 회전 구해주는 함수. 언리얼 최고^^
-		FVector SpawnLocation = Forward.RotateAngleAxis(Angle * i, FVector::UpVector) * RangeRadius;
-		CreateNewBall(SpawnLocation);
+		// 새로운 각도에 따른 공 배치를 위해 기존 공들 다 지워버림
+		TArray<USceneComponent*> ChildArray;
+		RootComponent->GetChildrenComponents(true, ChildArray);
+		for (auto elem : ChildArray) elem->DestroyComponent();
+
+		NowBallCount++;
+		FVector Forward = GetActorForwardVector().GetSafeNormal();
+
+		// 공 갯수로 나눠서 각 공들 사이의 각을 구함
+		float Angle;
+		if (NowBallCount == 0) Angle = 0;
+		else Angle = 360.f / NowBallCount;
+
+		for (uint8 i = 0; i < NowBallCount; i++)
+		{
+			// 회전 구해주는 함수. 언리얼 최고^^
+			FVector SpawnLocation = Forward.RotateAngleAxis(Angle * i, FVector::UpVector) * RangeRadius;
+			CreateNewBall(SpawnLocation);
+		}
 	}
 
 	// 15초 후에 파괴할 건데, 그 전에 공 먹으면 공 추가되고 다시 15초 카운팅

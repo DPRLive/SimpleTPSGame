@@ -46,7 +46,7 @@ public:
 		float AttackRange = 200.f;
 	
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
-		float Hp = 1000;
+		float Hp = 1000.f;
 
 	// State ฐüทร
 	float CurrentTime = 0;

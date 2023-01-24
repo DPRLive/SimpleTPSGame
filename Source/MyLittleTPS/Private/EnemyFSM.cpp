@@ -59,7 +59,7 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 void UEnemyFSM::MoveState()
 {
-	if (Target == nullptr) return;
+	if (!Target.IsValid()) return;
 	
 	// NavMeshVolume을 통해 목표에게 이동
 	AI->MoveToActor(Target.Get());
@@ -96,7 +96,7 @@ void UEnemyFSM::OnAttackDamage(float Damage)
 	AI->StopMovement();
 	EnemyState = EEnemyState::Damaged;
 	// 데미지 애니메이션 실행
-	if (Hp - Damage > 0) Hp = 0;
+	if (Hp - Damage < 0) Hp = 0;
 	else Hp -= Damage;
 }
 
