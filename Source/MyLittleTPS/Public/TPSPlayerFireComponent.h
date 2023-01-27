@@ -37,6 +37,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
 		TSubclassOf<class ABullet> BulletFactory;
+	
+	UPROPERTY()
+		class UPlayerAnim* Anim;
 
 	// µÙ∑π¿Ã √º≈©
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
@@ -57,7 +60,9 @@ public:
 
 	uint8 Mag;
 
+	UFUNCTION(BlueprintCallable, Category = Reload)
+		void EndReload();
 	// ¡‹¿Œ / ¡‹æ∆øÙ
-	bool IsZoom;
+	bool IsZoom = false;
 	void Zoom();
 };

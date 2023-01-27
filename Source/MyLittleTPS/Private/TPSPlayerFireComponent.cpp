@@ -4,6 +4,7 @@
 #include "TPSPlayerFireComponent.h"
 #include "Bullet.h"
 #include "TPSPlayer.h"
+#include "PlayerAnim.h"
 #include <Camera/CameraComponent.h>
 #include <Kismet/KismetMathLibrary.h>
 
@@ -52,7 +53,8 @@ void UTPSPlayerFireComponent::BeginPlay()
 
 	GunState = EGunState::Idle;
 	Mag = MaxMag;
-	IsZoom = false;
+
+	Anim = Cast<UPlayerAnim>(Player->GetMesh()->GetAnimInstance());
 }
 
 void UTPSPlayerFireComponent::FireState()
@@ -67,8 +69,16 @@ void UTPSPlayerFireComponent::ReloadState()
 {
 	if (GunState != EGunState::Idle) return;
 	GunState = EGunState::Reload;
-	// Reload Animation Play 장전모션 끝났는지 체크 필요함
-	// 임시, 추후 Anim Notify로 장전 모션 끝나면 장전 시킬 예정,
+	// 장전 모션 실행
+	float ReloadTime = Player->PlayAnimMontage(Anim->UpperMontage, 1.0f, TEXT("Reload"));
+
+	FTimerHandle Timer;
+	GetWorld()->GetTimerManager().SetTimer(Timer, this, &UTPSPlayerFireComponent::EndReload, ReloadTime, false);
+}
+
+void UTPSPlayerFireComponent::EndReload()
+{
+	//Anim Notify로 장전 모션 끝나면 장전
 	Mag = MaxMag;
 	GunState = EGunState::Idle;
 }
@@ -90,6 +100,7 @@ void UTPSPlayerFireComponent::InputFire()
 
 void UTPSPlayerFireComponent::StopFire()
 {
+	if (GunState != EGunState::Fire) return; // 발사 상태만 멈출수 있다.
 	GunState = EGunState::Idle;
 	// 타이머 연사
 	// GetWorld()->GetTimerManager().ClearTimer(FireTimer);
@@ -102,23 +113,29 @@ void UTPSPlayerFireComponent::Fire()
 		if (Mag <= 0) return;
 		Mag--;
 
-		FVector StartPos = Player->CameraComp->GetComponentLocation();
-		FVector DestActorPos = Player->CameraComp->GetForwardVector() * 15000; // 150m까지는 잘 쏨
-		FHitResult Result;
-		FCollisionQueryParams Params;
-		Params.AddIgnoredActor(Player); // 내가 내총에 맞을수는 없지
-
-		// 50m 이내에 물체를 조준했다면 거기를 목표로 조준
-		bool bHit = GetWorld()->LineTraceSingleByChannel(Result, StartPos, DestActorPos, ECollisionChannel::ECC_Visibility);
-		if (bHit)
-		{
-			DestActorPos = Result.Location;
-		}
-
-		// 총을 발사할 전방방향 계산
 		FTransform BulletTrans = Player->GunMesh->GetSocketTransform(TEXT("FirePosition"));
-		if (FVector::Distance(StartPos, DestActorPos) > 1000.f) // 너무 가까이 쏘면 이상하니까 가까울땐 그냥 총구 전방 방향으로 발사
+		if (Player->GetVelocity().Size() > 400.f)
+		{
+			// 달리면서 쏘면 조준 그런거 안함
+			Player->PlayAnimMontage(Anim->UpperMontage, 1.0f, TEXT("FireHip"));
+		}
+		else
+		{
+			Player->PlayAnimMontage(Anim->UpperMontage, 1.0f, TEXT("Fire"));
+
+			FVector StartPos = Player->CameraComp->GetComponentLocation();
+			FVector DestActorPos = Player->CameraComp->GetForwardVector() * 20000; // 200m까지는 잘 쏨
+			FHitResult Result;
+			FCollisionQueryParams Params;
+			Params.AddIgnoredActor(Player); // 내가 내총에 맞을수는 없지
+
+			// 50m 이내에 물체를 조준했다면 거기를 목표로 조준
+			bool bHit = GetWorld()->LineTraceSingleByChannel(Result, StartPos, DestActorPos, ECollisionChannel::ECC_Visibility);
+			if (bHit) DestActorPos = Result.Location;
+			
+			// 총을 발사할 전방방향 계산
 			BulletTrans.SetRotation(FQuat(UKismetMathLibrary::FindLookAtRotation(BulletTrans.GetLocation(), DestActorPos)));
+		}
 		GetWorld()->SpawnActor<ABullet>(BulletFactory, BulletTrans);
 		CurrentTime = 0;
 	}

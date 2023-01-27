@@ -25,7 +25,7 @@ public:
 		float WalkSpeed = 300;
 
 	UPROPERTY(EditDefaultsOnly, Category = Speed)
-		float RunSpeed = 650;
+		float RunSpeed = 600;
 
 	// 카메라 이동
 	void LookUp(float Value);

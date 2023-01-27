@@ -33,6 +33,9 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Settings)
 		float Hp;
 
+	UFUNCTION(BlueprintCallable, Category = Event)
+		void OnAttackDamage(float Damage);
+
 	// 카메라
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		class USpringArmComponent* SpringArmComp;
@@ -49,7 +52,7 @@ public:
 		class UTPSPlayerBaseComponent* MoveComp;
 
 	// 총알 발사 담당 컴포넌트
-	UPROPERTY(VisibleAnywhere, Category = PlayerComponent)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = PlayerComponent)
 		class UTPSPlayerBaseComponent* FireComp;
 
 	// 스킬 담당 컴포넌트

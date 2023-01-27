@@ -5,6 +5,7 @@
 #include "TPSPlayerMoveComponent.h"
 #include "TPSPlayerFireComponent.h"
 #include "TPSPlayerSkillComponent.h"
+#include "PlayerAnim.h"
 #include <GameFramework/SpringArmComponent.h>
 #include <Camera/CameraComponent.h>
 #include <Components/CapsuleComponent.h>
@@ -48,8 +49,7 @@ ATPSPlayer::ATPSPlayer()
 	if (TempGunMesh.Succeeded())
 	{
 		GunMesh->SetSkeletalMesh(TempGunMesh.Object);
-		//GunMesh->SetupAttachment(GetMesh(), TEXT("hand_r_Socket"));
-		GunMesh->SetupAttachment(GetMesh());
+		GunMesh->SetupAttachment(GetMesh(), TEXT("hand_r_Socket"));
 	}
 
 	// 이동 담당 컴포넌트 소유
@@ -81,4 +81,19 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	// 델리게이트 호출
 	InputBindingDelegate.Broadcast(PlayerInputComponent);
+}
+
+void ATPSPlayer::OnAttackDamage(float Damage)
+{
+	auto Anim = Cast<UPlayerAnim>(GetMesh()->GetAnimInstance());
+	if (Hp - Damage < 0)
+	{
+		Hp = 0;
+		if(Anim != nullptr) PlayAnimMontage(Anim->FullMontage, 1.0f, FName(TEXT("Death")));
+	}
+	else
+	{
+		Hp -= Damage;
+		if (Anim != nullptr) PlayAnimMontage(Anim->FullMontage, 1.5f, FName(TEXT("Hit")));
+	}
 }
