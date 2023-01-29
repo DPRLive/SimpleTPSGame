@@ -21,7 +21,6 @@ void UPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 		auto Controller = Player->GetController();
 		if (Controller != nullptr) UpDownRotate = -Controller->GetControlRotation().Pitch;
 		else UpDownRotate = 0.f;
-		UE_LOG(LogTemp, Warning, TEXT("%f"), UpDownRotate);
 
 		auto Movement = Player->GetMovementComponent();
 		if (Movement != nullptr)

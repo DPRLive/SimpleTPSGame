@@ -3,7 +3,9 @@
 
 #include "ItemDrop.h"
 #include <Components/BoxComponent.h>
-#include <Components/StaticMeshComponent.h>
+#include <Particles/ParticleSystem.h>
+#include <Particles/ParticleSystemComponent.h>
+#include <Kismet/GameplayStatics.h>
 #include "TPSPlayer.h"
 #include "Item.h"
 
@@ -15,15 +17,20 @@ AItemDrop::AItemDrop()
 	Box->SetCollisionProfileName(TEXT("ItemDrop"));
 	SetRootComponent(Box);
 
-	SkillPreview = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SkillPreview"));
-	ConstructorHelpers::FObjectFinder<UStaticMesh> TempMesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
-	if (TempMesh.Succeeded())
+	ItemPreview = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("SkillPreview"));
+	ConstructorHelpers::FObjectFinder<UParticleSystem> EmitterTemp(TEXT("/Script/Engine.ParticleSystem'/Game/Effects/P_ItemBall.P_ItemBall'"));
+	if (EmitterTemp.Succeeded())
 	{
-		SkillPreview->SetStaticMesh(TempMesh.Object);
-		SkillPreview->SetRelativeScale3D(FVector(0.5f));
-		SkillPreview->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ItemPreview->SetTemplate(EmitterTemp.Object);
+		ItemPreview->SetRelativeScale3D(FVector(.8f));
 	}
-	SkillPreview->SetupAttachment(RootComponent);
+	ItemPreview->SetupAttachment(RootComponent);
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem> OverlapEmitterTemp(TEXT("/Script/Engine.ParticleSystem'/Game/Effects/P_ItemOverlap.P_ItemOverlap'"));
+	if (OverlapEmitterTemp.Succeeded()) { OverlapEmitter = OverlapEmitterTemp.Object; }
+
+	ConstructorHelpers::FObjectFinder<USoundWave> ItemOverlapSoundTemp(TEXT("/Script/Engine.SoundWave'/Game/Effects/Sounds/ItemDropOverlap.ItemDropOverlap'"));
+	if (ItemOverlapSoundTemp.Succeeded()) { ItemOverlapSound = ItemOverlapSoundTemp.Object; }
 }
 
 void AItemDrop::BeginPlay()
@@ -48,6 +55,9 @@ void AItemDrop::OnPlayerOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 		auto Player = Cast<ATPSPlayer>(OtherActor);
 		if (Player != nullptr)
 		{
+			if(OverlapEmitter != nullptr) UGameplayStatics::SpawnEmitterAttached(OverlapEmitter, Player->GetMesh(), NAME_None , FVector(ForceInit), FRotator(ForceInit), FVector(0.5f, 0.5f, 1.f));
+			if (ItemOverlapSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), ItemOverlapSound, GetActorLocation());
+
 			TArray<AActor*> OutActors; // 붙어있는 아이템이 있는지?
 			Player->GetAttachedActors(OutActors);
 			if (OutActors.Num() < 1) // 안 붙어있으면 생성해서 붙여준다.

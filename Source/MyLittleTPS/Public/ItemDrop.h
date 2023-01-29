@@ -23,8 +23,14 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Collision)
 		class UBoxComponent* Box;
 
-	UPROPERTY(VisibleAnywhere, Category = Ball)
-		class UStaticMeshComponent* SkillPreview;
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+		class UParticleSystemComponent* ItemPreview;
+
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+		class UParticleSystem* OverlapEmitter;
+
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+		class USoundWave* ItemOverlapSound;
 
 	UFUNCTION()
 		void OnPlayerOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

@@ -7,7 +7,9 @@
 #include <Components/SceneComponent.h>
 #include <GameFramework/RotatingMovementComponent.h>
 #include <Components/SphereComponent.h>
-#include <components/StaticMeshComponent.h>
+#include <Kismet/GameplayStatics.h>
+#include <Particles/ParticleSystem.h>
+#include <Particles/ParticleSystemComponent.h>
 
 AItem::AItem()
 {
@@ -19,6 +21,15 @@ AItem::AItem()
 	RotatingComponent = CreateDefaultSubobject<URotatingMovementComponent>(TEXT("RotatingComponent"));
 	RotatingComponent->RotationRate = FRotator(0.f, 230.f, 0.f);
 	RotatingComponent->SetUpdatedComponent(RootComponent);
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem> HitEmitterTemp(TEXT("/Script/Engine.ParticleSystem'/Game/Effects/P_ItemHit.P_ItemHit'"));
+	if (HitEmitterTemp.Succeeded()) HitEmitter = HitEmitterTemp.Object;
+
+	ConstructorHelpers::FObjectFinder<USoundWave> ItemSoundTemp(TEXT("/Script/Engine.SoundWave'/Game/Effects/Sounds/ItemLoop.ItemLoop'"));
+	if (ItemSoundTemp.Succeeded()) ItemSound = ItemSoundTemp.Object;
+
+	ConstructorHelpers::FObjectFinder<USoundWave> HitSoundTemp(TEXT("/Script/Engine.SoundWave'/Game/Effects/Sounds/ItemHit.ItemHit'"));
+	if (HitSoundTemp.Succeeded()) HitSound = HitSoundTemp.Object;
 }
 
 void AItem::BeginPlay()
@@ -26,6 +37,7 @@ void AItem::BeginPlay()
 	Super::BeginPlay();
 	
 	AddBall();
+	if (ItemSound != nullptr) { UGameplayStatics::SpawnSoundAttached(ItemSound, RootComponent, NAME_None, FVector(ForceInit), EAttachLocation::KeepRelativeOffset, true); }
 }
 
 void AItem::Tick(float DeltaTime)
@@ -40,8 +52,11 @@ void AItem::AddBall()
 		// 새로운 각도에 따른 공 배치를 위해 기존 공들 다 지워버림
 		TArray<USceneComponent*> ChildArray;
 		RootComponent->GetChildrenComponents(true, ChildArray);
-		for (auto elem : ChildArray) elem->DestroyComponent();
-
+		for (auto elem : ChildArray)
+		{
+			if(elem->GetName().Contains(TEXT("AudioComponent"), ESearchCase::IgnoreCase)) continue; // 오디오는 지우지 말고
+			elem->DestroyComponent();
+		}
 		NowBallCount++;
 		FVector Forward = GetActorForwardVector().GetSafeNormal();
 
@@ -78,15 +93,14 @@ void AItem::CreateNewBall(FVector& Location)
 	NewCollision->RegisterComponent();
 	AddInstanceComponent(NewCollision);
 
-	auto NewBall = NewObject<UStaticMeshComponent>(this);
-	auto Mesh = LoadObject<UStaticMesh>(nullptr, TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
-	if (Mesh != nullptr)
+	auto NewBall = NewObject<UParticleSystemComponent>(this);
+	auto ParticleLoad = LoadObject<UParticleSystem>(nullptr, TEXT("/Script/Engine.ParticleSystem'/Game/Effects/P_ItemBall.P_ItemBall'"));
+	if (ParticleLoad != nullptr)
 	{
-		NewBall->SetStaticMesh(Mesh);
+		NewBall->SetTemplate(ParticleLoad);
 	}
 	NewBall->SetupAttachment(NewCollision);
-	NewBall->SetRelativeScale3D(FVector(0.5f));
-	NewBall->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	NewBall->SetRelativeScale3D(FVector(0.8f));
 	NewBall->RegisterComponent();
 	AddInstanceComponent(NewBall);
 }
@@ -98,6 +112,9 @@ void AItem::OnAttackDamage(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		auto Enemy = Cast<AEnemy>(OtherActor);
 		if (Enemy != nullptr)
 		{
+			if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEmitter, Enemy->GetActorLocation());
+			if (HitSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, Enemy->GetActorLocation());
+
 			Enemy->FSM->OnAttackDamage(BallDamage);
 		}
 	}

@@ -5,6 +5,8 @@
 #include <GameFramework/ProjectileMovementComponent.h>
 #include <Components/SphereComponent.h>
 #include <Components/StaticMeshComponent.h>
+#include <Kismet/GameplayStatics.h>
+#include <Particles/ParticleSystem.h>
 #include "EnemyFSM.h"
 #include "Enemy.h"
 
@@ -16,6 +18,8 @@ ABullet::ABullet()
 	SphereComp->SetSphereRadius(10);
 	// 콜리전 bullet으로 설정
 	SphereComp->SetCollisionProfileName(TEXT("Bullet"));
+	SphereComp->SetGenerateOverlapEvents(false);
+	SphereComp->SetNotifyRigidBodyCollision(true); // 히트 이벤트 생성
 	SetRootComponent(SphereComp);
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
@@ -36,6 +40,11 @@ ABullet::ABullet()
 	MoveComp->ProjectileGravityScale = 0.2f;
 	MoveComp->SetUpdatedComponent(RootComponent);
 
+	ConstructorHelpers::FObjectFinder<UParticleSystem> EmitterTemp(TEXT("/Script/Engine.ParticleSystem'/Game/Effects/P_BulletHit.P_BulletHit'"));
+	if (EmitterTemp.Succeeded()) HitEmitter = EmitterTemp.Object;
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem> EnemyHitEmitterTemp(TEXT("/Script/Engine.ParticleSystem'/Game/Effects/P_BulletHitEnemy.P_BulletHitEnemy'"));
+	if (EnemyHitEmitterTemp.Succeeded()) EnemyHitEmitter = EnemyHitEmitterTemp.Object;
 }
 
 void ABullet::BeginPlay()
@@ -43,22 +52,23 @@ void ABullet::BeginPlay()
 	Super::BeginPlay();
 	// 2초 뒤 삭제
 	SetLifeSpan(2.0f);
-	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ABullet::OnBulletBeginOverlap);
+	SphereComp->OnComponentHit.AddDynamic(this, &ABullet::OnBulletHit);
 }
 
-void ABullet::OnBulletBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ABullet::OnBulletHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (OtherActor != nullptr)
+	auto PresetName = HitComponent->GetCollisionProfileName();
+	if (OtherActor != nullptr && PresetName.Compare(FName(TEXT("Enemy")))) // 상대 프리셋이 Enemy면 삭제해버림
 	{
-		auto PresetName = OverlappedComponent->GetCollisionProfileName();
-		
-		if (PresetName.Compare(FName(TEXT("Enemy")))) // 상대 프리셋이 Enemy면 삭제해버림
+		auto Enemy = Cast<AEnemy>(OtherActor);
+		if (Enemy != nullptr)
 		{
-			auto Enemy = Cast<AEnemy>(OtherActor);
-			if (Enemy != nullptr)
-			{
-				Enemy->FSM->OnAttackDamage(1000);
-			}
+			if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), EnemyHitEmitter, Hit.Location);
+			Enemy->FSM->OnAttackDamage(1000);
+		}
+		else
+		{
+			if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEmitter, Hit.Location);
 		}
 		Destroy();
 	}

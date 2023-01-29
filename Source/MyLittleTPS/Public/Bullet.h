@@ -35,6 +35,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
 		float BulletMaxSpeed = 80000;
 
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+		class UParticleSystem* HitEmitter;
+
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+		class UParticleSystem* EnemyHitEmitter;
+
 	UFUNCTION()
-		void OnBulletBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+		void OnBulletHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };
