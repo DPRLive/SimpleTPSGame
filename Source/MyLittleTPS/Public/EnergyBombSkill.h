@@ -23,6 +23,18 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Collision)
 		class USphereComponent* SkillRangeCollision;
 
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+		class UParticleSystem* SkillEmitter;
+
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+		class UParticleSystem* HitEmitter;
+
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+		class USoundWave* SkillSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+		class USoundWave* HitSound;
+
 	UFUNCTION()
 		void OnBeginOverlapEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };

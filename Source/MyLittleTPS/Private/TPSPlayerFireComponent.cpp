@@ -7,10 +7,21 @@
 #include "PlayerAnim.h"
 #include <Camera/CameraComponent.h>
 #include <Kismet/KismetMathLibrary.h>
+#include <Kismet/GameplayStatics.h>
+#include <Particles/ParticleSystem.h>
 
 UTPSPlayerFireComponent::UTPSPlayerFireComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem> EmitterTemp(TEXT("/Script/Engine.ParticleSystem'/Game/Effects/P_Shoot.P_Shoot'"));
+	if (EmitterTemp.Succeeded()) GunShootEmitter = EmitterTemp.Object;
+
+	ConstructorHelpers::FObjectFinder<USoundWave> FireSoundTemp(TEXT("/Script/Engine.SoundWave'/Game/Effects/Sounds/GunFire.GunFire'"));
+	if (FireSoundTemp.Succeeded()) FireSound = FireSoundTemp.Object;
+
+	ConstructorHelpers::FObjectFinder<USoundWave> DryGunSoundTemp(TEXT("/Script/Engine.SoundWave'/Game/Effects/Sounds/DryGun.DryGun'"));
+	if (DryGunSoundTemp.Succeeded()) DryGunSound = DryGunSoundTemp.Object;
 }
 
 void UTPSPlayerFireComponent::SetupPlayerInput(UInputComponent* PlayerInputComponent)
@@ -86,24 +97,19 @@ void UTPSPlayerFireComponent::EndReload()
 void UTPSPlayerFireComponent::InputFire()
 {
 	if (GunState != EGunState::Idle) return;
+	if (Mag <= 0)
+	{
+		if (DryGunSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), DryGunSound, Player->GunMesh->GetComponentLocation());
+		return;
+	}
 	Fire();
 	GunState = EGunState::Fire;
-
-	// 타이머 연사
-	//Fire();
-	//if (IsAutoFire)
-	//{
-	//	GetWorld()->GetTimerManager().SetTimer(FireTimer, this, 
-	//		&UTPSPlayerFireComponent::InputFire, 1 / FirePerSeconds, false);
-	//}
 }
 
 void UTPSPlayerFireComponent::StopFire()
 {
 	if (GunState != EGunState::Fire) return; // 발사 상태만 멈출수 있다.
 	GunState = EGunState::Idle;
-	// 타이머 연사
-	// GetWorld()->GetTimerManager().ClearTimer(FireTimer);
 }
 
 void UTPSPlayerFireComponent::Fire()
@@ -136,6 +142,10 @@ void UTPSPlayerFireComponent::Fire()
 			// 총을 발사할 전방방향 계산
 			BulletTrans.SetRotation(FQuat(UKismetMathLibrary::FindLookAtRotation(BulletTrans.GetLocation(), DestActorPos)));
 		}
+
+		if(GunShootEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), GunShootEmitter, BulletTrans);
+		if (FireSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, BulletTrans.GetLocation());
+
 		GetWorld()->SpawnActor<ABullet>(BulletFactory, BulletTrans);
 		CurrentTime = 0;
 	}

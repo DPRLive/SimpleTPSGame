@@ -35,9 +35,21 @@ public:
 	void FireState();
 	void ReloadState();
 
-	UPROPERTY(EditDefaultsOnly, Category = Settings)
+	UPROPERTY(EditDefaultsOnly, Category = Bullet)
 		TSubclassOf<class ABullet> BulletFactory;
 	
+	UPROPERTY(BlueprintReadOnly, Category = Bullet)
+		uint8 Mag;
+	
+	UPROPERTY(EditDefaultsOnly, Category = Bullet)
+		class UParticleSystem* GunShootEmitter;
+
+	UPROPERTY(EditDefaultsOnly, Category = Bullet)
+		class USoundWave* FireSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = Bullet)
+		class USoundWave* DryGunSound;
+
 	UPROPERTY()
 		class UPlayerAnim* Anim;
 
@@ -57,8 +69,6 @@ public:
 	// ÅºÃ¢ °ü¸®
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
 		uint8 MaxMag = 30;
-
-	uint8 Mag;
 
 	UFUNCTION(BlueprintCallable, Category = Reload)
 		void EndReload();

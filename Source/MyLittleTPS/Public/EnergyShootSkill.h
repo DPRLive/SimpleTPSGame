@@ -23,6 +23,21 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Collision)
 		class UBoxComponent* SkillRangeCollision;
 
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+		class UParticleSystemComponent* SkillEmitter;
+
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+		class USoundWave* SkillUseSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+		class USoundWave* SkillLoopSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+		class UParticleSystem* SkillHitEmitter;
+
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+		class USoundWave* SkillHitSound;
+
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		class UProjectileMovementComponent* MoveComp;
 
