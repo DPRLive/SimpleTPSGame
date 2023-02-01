@@ -14,8 +14,9 @@ class MYLITTLETPS_API UPlayerAnim : public UAnimInstance
 {
 	GENERATED_BODY()
 public:
+	UPlayerAnim();
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-	
+
 	UPROPERTY(BlueprintReadOnly, Category = Speed)
 		float RSpeed = 0.f;
 
@@ -36,4 +37,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = Montage)
 		class UAnimMontage* FullMontage;
+
+	UFUNCTION(BlueprintCallable, Category = Event)
+		void OnEndReload();
 };

@@ -70,7 +70,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
 		uint8 MaxMag = 30;
 
-	UFUNCTION(BlueprintCallable, Category = Reload)
+	UFUNCTION()
 		void EndReload();
 	// ¡‹¿Œ / ¡‹æ∆øÙ
 	bool IsZoom = false;

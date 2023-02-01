@@ -64,7 +64,7 @@ void ABullet::OnBulletHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 		if (Enemy != nullptr)
 		{
 			if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), EnemyHitEmitter, Hit.Location);
-			Enemy->FSM->OnAttackDamage(1000);
+			Enemy->FSM->OnAttackDamage(400);
 		}
 		else
 		{

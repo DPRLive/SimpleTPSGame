@@ -4,15 +4,18 @@
 #include "EnemyFSM.h"
 #include "Enemy.h"
 #include "TPSPlayer.h"
+#include <animation/AnimMontage.h>
 #include <AIController.h>
 #include <Kismet/GameplayStatics.h>
+#include <Kismet/KismetMathLibrary.h>
 #include <GameFramework/CharacterMovementComponent.h>
 
 UEnemyFSM::UEnemyFSM()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
+	ConstructorHelpers::FObjectFinder<UAnimMontage> MontageTemp(TEXT("/Script/Engine.AnimMontage'/Game/Animations/AM_EnemyFullMontage.AM_EnemyFullMontage'"));
+	if (MontageTemp.Succeeded()) EnemyMontage = MontageTemp.Object;
 }
 
 void UEnemyFSM::BeginPlay()
@@ -39,7 +42,6 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	CurrentTime += DeltaTime;
 	switch (EnemyState)
 	{
 	case EEnemyState::Move:
@@ -48,11 +50,10 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	case EEnemyState::Attack:
 		AttackState();
 		break;
-	case EEnemyState::Damaged:
-		DamageState();
-		break;
 	case EEnemyState::Die:
 		DieState(DeltaTime);
+		break;
+	case EEnemyState::AnimPlay:
 		break;
 	}
 }
@@ -61,65 +62,72 @@ void UEnemyFSM::MoveState()
 {
 	if (!Target.IsValid()) return;
 	
-	// NavMeshVolume을 통해 목표에게 이동
-	AI->MoveToActor(Target.Get());
-	//AI->MoveToLocation(Target->GetActorLocation());
-
+	// NavMeshVolume을 통해 목표에게 이동 AI->MoveToActor(Target.Get()); AI->MoveToLocation(Target->GetActorLocation());
+	if (!(AI->GetMoveStatus() == EPathFollowingStatus::Moving))
+	{
+		FAIMoveRequest Req;
+		Req.SetGoalActor(Target.Get());
+		AI->MoveTo(Req);
+	}
 	if (FVector::Distance(Owner->GetActorLocation(), Target->GetActorLocation()) <= AttackRange)
 	{
-		AI->StopMovement();
-		Attack();
 		EnemyState = EEnemyState::Attack;
 	}
 }
 
-void UEnemyFSM::Attack()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Attack!!"));
-	CurrentTime = 0;
-}
-
 void UEnemyFSM::AttackState()
 {
-	if (CurrentTime >= AttackDelay)
-	{
-		Attack();
-	}
-	if (FVector::Distance(Owner->GetActorLocation(), Target->GetActorLocation()) > AttackRange)
-	{
-		EnemyState = EEnemyState::Move;
-	}
-}
-
-void UEnemyFSM::OnAttackDamage(float Damage)
-{
 	AI->StopMovement();
-	EnemyState = EEnemyState::Damaged;
-	// 데미지 애니메이션 실행
-	if (Hp - Damage < 0) Hp = 0;
-	else Hp -= Damage;
-}
-
-void UEnemyFSM::DamageState()
-{
-	if (Hp > 0) // 데미지 애니메이션 끝났는지 확인 필요
+	if (FVector::Distance(Owner->GetActorLocation(), Target->GetActorLocation()) > AttackRange)
 	{
 		EnemyState = EEnemyState::Move;
 	}
 	else
 	{
-		EnemyState = EEnemyState::Die;
+		uint8 Rand = FMath::RandRange(0, 3);
+		PlayAnim(FName(*FString::Printf(TEXT("Attack%d"), Rand)), EEnemyState::Attack);
+	}
+}
+
+void UEnemyFSM::OnAttackDamage(float Damage)
+{
+	//if (EnemyState == EEnemyState::Die) return;
+	AI->StopMovement();
+	EnemyState = EEnemyState::Damaged;
+
+	if (Hp - Damage <= 0)
+	{
+		Hp = 0;
+		Owner->SetActorEnableCollision(false);
+		PlayAnim(TEXT("Die"), EEnemyState::Die);
+	}
+	else
+	{
+		Hp -= Damage;
+		// 데미지 애니메이션 실행
+		uint8 Rand = FMath::RandRange(0, 2);
+		PlayAnim(FName(*FString::Printf(TEXT("Hit%d"), Rand)), EEnemyState::Move);
 	}
 }
 
 void UEnemyFSM::DieState(float DeltaTime)
-{
-	// 죽음 애니메이션 실행
-	// 죽음 애니메이션이 끝나면
-	// 아래로 내려가면서 퇴장
-	Owner->SetActorEnableCollision(false);
+{ 
+	// 죽음 애니메이션이 끝나면 아래로 내려가면서 퇴장
 	FVector Dist = Owner->GetActorLocation() + (FVector::DownVector * (100 * DeltaTime)); // 등가속도 운동
 	Owner->SetActorLocation(Dist);
 
 	if (Owner->GetActorLocation().Z <= -300) Owner->Destroy();
+}
+
+void UEnemyFSM::PlayAnim(const FName& AnimName, EEnemyState NewDestState)
+{
+	EnemyState = EEnemyState::AnimPlay;
+	Owner->StopAnimMontage(EnemyMontage);
+	Owner->PlayAnimMontage(EnemyMontage, 1.0f, AnimName);
+	DestState = NewDestState;
+}
+
+void UEnemyFSM::OnEndPlayAnim()
+{
+	EnemyState = DestState;
 }

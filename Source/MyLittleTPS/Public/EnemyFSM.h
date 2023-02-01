@@ -13,6 +13,7 @@ enum class EEnemyState : uint8
 	Attack,
 	Damaged,
 	Die,
+	AnimPlay,
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -29,10 +30,14 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	EEnemyState EnemyState;
+	UPROPERTY(BlueprintReadOnly, Category = State)
+		EEnemyState EnemyState;
 
 	UPROPERTY()
 		class AEnemy* Owner;
+
+	UPROPERTY()
+		class UAnimMontage* EnemyMontage;
 
 	UPROPERTY()
 		class AAIController* AI;
@@ -49,16 +54,15 @@ public:
 		float Hp = 1000.f;
 
 	// State ฐüทร
-	float CurrentTime = 0;
-
-	UPROPERTY(EditDefaultsOnly, Category = Setting)
-		float AttackDelay = 2.f;
-
 	void MoveState();
 	void AttackState();
-	void DamageState();
 	void DieState(float DeltaTime);
 
-	void Attack();
 	void OnAttackDamage(float Damage);
+
+	void PlayAnim(const FName& AnimName, EEnemyState DestState);
+
+	EEnemyState DestState = EEnemyState::Move;
+	UFUNCTION(BlueprintCallable, Category = Event)
+		void OnEndPlayAnim();
 };

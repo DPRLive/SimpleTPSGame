@@ -81,10 +81,7 @@ void UTPSPlayerFireComponent::ReloadState()
 	if (GunState != EGunState::Idle) return;
 	GunState = EGunState::Reload;
 	// 장전 모션 실행
-	float ReloadTime = Player->PlayAnimMontage(Anim->UpperMontage, 1.0f, TEXT("Reload"));
-
-	FTimerHandle Timer;
-	GetWorld()->GetTimerManager().SetTimer(Timer, this, &UTPSPlayerFireComponent::EndReload, ReloadTime, false);
+	Player->PlayAnimMontage(Anim->UpperMontage, 1.0f, TEXT("Reload"));
 }
 
 void UTPSPlayerFireComponent::EndReload()

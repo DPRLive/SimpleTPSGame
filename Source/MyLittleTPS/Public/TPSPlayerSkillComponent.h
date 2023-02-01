@@ -18,7 +18,7 @@ public:
 	UTPSPlayerSkillComponent();
 	virtual void SetupPlayerInput(class UInputComponent* PlayerInputComponent) override;
 
-	uint8 SelectedSkill = 0; // 0 회복 1 기방출 2 전방공격 예정..
+	uint8 SelectedSkill = 2; // 0 회복 1 기방출 2 전방공격 예정..
 
 	UPROPERTY(EditDefaultsOnly, Category = Bullet)
 		class UParticleSystem* HealEmitter;
