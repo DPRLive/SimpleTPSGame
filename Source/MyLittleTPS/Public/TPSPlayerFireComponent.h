@@ -75,4 +75,13 @@ public:
 	// ¡‹¿Œ / ¡‹æ∆øÙ
 	bool IsZoom = false;
 	void Zoom();
+
+	// π›µø
+	UPROPERTY(EditDefaultsOnly, Category = Recoil)
+		class UCurveVector* RecoilCurve;
+
+	uint8 RecoilCount = 0;
+	FVector2D RecoilValue = FVector2D(ForceInit);
+
+	void AddRecoil();
 };

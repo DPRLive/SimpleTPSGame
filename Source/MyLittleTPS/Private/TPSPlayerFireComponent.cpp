@@ -9,6 +9,7 @@
 #include <Kismet/KismetMathLibrary.h>
 #include <Kismet/GameplayStatics.h>
 #include <Particles/ParticleSystem.h>
+#include <Curves/CurveVector.h>
 
 UTPSPlayerFireComponent::UTPSPlayerFireComponent()
 {
@@ -22,6 +23,9 @@ UTPSPlayerFireComponent::UTPSPlayerFireComponent()
 
 	ConstructorHelpers::FObjectFinder<USoundWave> DryGunSoundTemp(TEXT("/Script/Engine.SoundWave'/Game/Effects/Sounds/DryGun.DryGun'"));
 	if (DryGunSoundTemp.Succeeded()) DryGunSound = DryGunSoundTemp.Object;
+
+	ConstructorHelpers::FObjectFinder<UCurveVector> CurveTemp(TEXT("/Script/Engine.CurveVector'/Game/RecoilCurve.RecoilCurve'"));
+	if (CurveTemp.Succeeded()) RecoilCurve = CurveTemp.Object;
 }
 
 void UTPSPlayerFireComponent::SetupPlayerInput(UInputComponent* PlayerInputComponent)
@@ -56,6 +60,14 @@ void UTPSPlayerFireComponent::TickComponent(float DeltaTime, enum ELevelTick Tic
 	float TargetFov = IsZoom ? 60.f : 90.f;
 	float NewFov = FMath::FInterpTo(Player->CameraComp->FieldOfView, TargetFov, DeltaTime, 20.f);
 	Player->CameraComp->FieldOfView = NewFov;
+	
+	// 반동 넣기
+	if (!RecoilValue.IsZero())
+	{
+		RecoilValue = FMath::Vector2DInterpTo(RecoilValue, FVector2D(0.f), DeltaTime, 12.f);
+		Player->AddControllerYawInput(RecoilValue.X);
+		Player->AddControllerPitchInput(-RecoilValue.Y);
+	}
 }
 
 void UTPSPlayerFireComponent::BeginPlay()
@@ -107,6 +119,7 @@ void UTPSPlayerFireComponent::StopFire()
 {
 	if (GunState != EGunState::Fire) return; // 발사 상태만 멈출수 있다.
 	GunState = EGunState::Idle;
+	RecoilCount = 0;
 }
 
 void UTPSPlayerFireComponent::Fire()
@@ -145,7 +158,18 @@ void UTPSPlayerFireComponent::Fire()
 
 		GetWorld()->SpawnActor<ABullet>(BulletFactory, BulletTrans);
 		CurrentTime = 0;
+
+		// 반동 추가
+		AddRecoil();
 	}
+}
+
+void UTPSPlayerFireComponent::AddRecoil()
+{
+	RecoilCount++;
+	FVector NewRecoilValue = RecoilCurve->GetVectorValue(RecoilCount);
+	RecoilValue.X = NewRecoilValue.X;
+	RecoilValue.Y = NewRecoilValue.Y;
 }
 
 void UTPSPlayerFireComponent::SwapAutoFire()
