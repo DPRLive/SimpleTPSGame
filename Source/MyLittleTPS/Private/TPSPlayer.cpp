@@ -89,11 +89,13 @@ void ATPSPlayer::OnAttackDamage(float Damage)
 	if (Hp - Damage < 0)
 	{
 		Hp = 0;
+		Controller->UnPossess();
+		SetActorEnableCollision(false);
 		if(Anim != nullptr) PlayAnimMontage(Anim->FullMontage, 1.0f, FName(TEXT("Death")));
 	}
 	else
 	{
 		Hp -= Damage;
-		if (Anim != nullptr) PlayAnimMontage(Anim->FullMontage, 1.5f, FName(TEXT("Hit")));
+		if (Anim != nullptr) PlayAnimMontage(Anim->UpperMontage, 1.2f, FName(TEXT("Hit")));
 	}
 }

@@ -84,16 +84,15 @@ void UEnemyFSM::AttackState()
 	}
 	else
 	{
-		uint8 Rand = FMath::RandRange(0, 3);
+		uint8 Rand = FMath::RandRange(0, 2);
 		PlayAnim(FName(*FString::Printf(TEXT("Attack%d"), Rand)), EEnemyState::Attack);
 	}
 }
 
 void UEnemyFSM::OnAttackDamage(float Damage)
 {
-	//if (EnemyState == EEnemyState::Die) return;
+	Owner->AttackAreaOff(); // 공격 애니메이션 중에 상태가 바뀌었을 수 있으니 공격 Area 체크 중지
 	AI->StopMovement();
-	EnemyState = EEnemyState::Damaged;
 
 	if (Hp - Damage <= 0)
 	{
@@ -116,14 +115,15 @@ void UEnemyFSM::DieState(float DeltaTime)
 	FVector Dist = Owner->GetActorLocation() + (FVector::DownVector * (100 * DeltaTime)); // 등가속도 운동
 	Owner->SetActorLocation(Dist);
 
-	if (Owner->GetActorLocation().Z <= -300) Owner->Destroy();
+	DieTime += DeltaTime;
+	if (DieTime >= 2.f) Owner->Destroy();
 }
 
 void UEnemyFSM::PlayAnim(const FName& AnimName, EEnemyState NewDestState)
 {
 	EnemyState = EEnemyState::AnimPlay;
 	Owner->StopAnimMontage(EnemyMontage);
-	Owner->PlayAnimMontage(EnemyMontage, 1.0f, AnimName);
+	Owner->PlayAnimMontage(EnemyMontage, 1.f, AnimName);
 	DestState = NewDestState;
 }
 

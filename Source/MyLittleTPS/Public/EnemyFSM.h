@@ -11,7 +11,6 @@ enum class EEnemyState : uint8
 {
 	Move,
 	Attack,
-	Damaged,
 	Die,
 	AnimPlay,
 };
@@ -48,7 +47,7 @@ public:
 		float WalkSpeed = 500.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
-		float AttackRange = 200.f;
+		float AttackRange = 150.f;
 	
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
 		float Hp = 1000.f;
@@ -56,6 +55,8 @@ public:
 	// State ฐüทร
 	void MoveState();
 	void AttackState();
+
+	float DieTime = 0.f;
 	void DieState(float DeltaTime);
 
 	void OnAttackDamage(float Damage);
