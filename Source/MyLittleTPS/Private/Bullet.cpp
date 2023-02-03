@@ -8,6 +8,8 @@
 #include <Kismet/GameplayStatics.h>
 #include <Particles/ParticleSystem.h>
 #include <Materials/Material.h>
+#include <Kismet/KismetMathLibrary.h>
+#include <Components/DecalComponent.h>
 #include "EnemyFSM.h"
 #include "Enemy.h"
 
@@ -70,7 +72,10 @@ void ABullet::OnBulletHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	else
 	{
 		if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEmitter, Hit.Location);
-		//if (BulletHole != nullptr) UGameplayStatics::SpawnDecalAttached(BulletHole, FVector(1.f), HitComponent, 
+		auto Decal = UGameplayStatics::SpawnDecalAttached(BulletHole, FVector(5.f, 5.f, 5.f), OtherComp, NAME_None, Hit.ImpactPoint,
+			UKismetMathLibrary::Conv_VectorToRotator(Hit.ImpactNormal), EAttachLocation::KeepWorldPosition, 5.0f);
+
+		Decal->SetFadeScreenSize(0.001f);
 	}
 	Destroy();
 }
