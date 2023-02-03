@@ -7,6 +7,7 @@
 #include <Components/StaticMeshComponent.h>
 #include <Kismet/GameplayStatics.h>
 #include <Particles/ParticleSystem.h>
+#include <Materials/Material.h>
 #include "EnemyFSM.h"
 #include "Enemy.h"
 
@@ -45,6 +46,9 @@ ABullet::ABullet()
 
 	ConstructorHelpers::FObjectFinder<UParticleSystem> EnemyHitEmitterTemp(TEXT("/Script/Engine.ParticleSystem'/Game/Effects/P_BulletHitEnemy.P_BulletHitEnemy'"));
 	if (EnemyHitEmitterTemp.Succeeded()) EnemyHitEmitter = EnemyHitEmitterTemp.Object;
+
+	ConstructorHelpers::FObjectFinder<UMaterial> BulletHoleTemp(TEXT("/Script/Engine.Material'/Game/Effects/M_BulletHole.M_BulletHole'"));
+	if (BulletHoleTemp.Succeeded()) BulletHole = BulletHoleTemp.Object;
 }
 
 void ABullet::BeginPlay()
@@ -57,19 +61,16 @@ void ABullet::BeginPlay()
 
 void ABullet::OnBulletHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	auto PresetName = HitComponent->GetCollisionProfileName();
-	if (OtherActor != nullptr && PresetName.Compare(FName(TEXT("Enemy")))) // 상대 프리셋이 Enemy면 삭제해버림
+	auto Enemy = Cast<AEnemy>(OtherActor); // 상대가Enemy면 삭제해버림
+	if (Enemy != nullptr)
 	{
-		auto Enemy = Cast<AEnemy>(OtherActor);
-		if (Enemy != nullptr)
-		{
-			if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), EnemyHitEmitter, Hit.Location);
-			Enemy->FSM->OnAttackDamage(400);
-		}
-		else
-		{
-			if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEmitter, Hit.Location);
-		}
-		Destroy();
+		if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), EnemyHitEmitter, Hit.Location);
+		Enemy->FSM->OnAttackDamage(400);
 	}
+	else
+	{
+		if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEmitter, Hit.Location);
+		//if (BulletHole != nullptr) UGameplayStatics::SpawnDecalAttached(BulletHole, FVector(1.f), HitComponent, 
+	}
+	Destroy();
 }

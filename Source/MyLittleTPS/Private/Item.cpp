@@ -107,15 +107,12 @@ void AItem::CreateNewBall(FVector& Location)
 
 void AItem::OnAttackDamage(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OverlappedComponent->GetCollisionProfileName().Compare(FName(TEXT("Enemy"))))
+	auto Enemy = Cast<AEnemy>(OtherActor);
+	if (Enemy != nullptr)
 	{
-		auto Enemy = Cast<AEnemy>(OtherActor);
-		if (Enemy != nullptr)
-		{
-			if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEmitter, Enemy->GetActorLocation());
-			if (HitSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, Enemy->GetActorLocation());
+		if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEmitter, Enemy->GetActorLocation());
+		if (HitSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, Enemy->GetActorLocation());
 
-			Enemy->FSM->OnAttackDamage(BallDamage);
-		}
+		Enemy->FSM->OnAttackDamage(BallDamage);
 	}
 }

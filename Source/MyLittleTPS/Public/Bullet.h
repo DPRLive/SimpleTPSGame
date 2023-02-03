@@ -41,6 +41,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
 		class UParticleSystem* EnemyHitEmitter;
 
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+		class UMaterial* BulletHole;
+
 	UFUNCTION()
 		void OnBulletHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };

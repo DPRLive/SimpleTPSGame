@@ -49,29 +49,25 @@ void AItemDrop::Tick(float DeltaTime)
 
 void AItemDrop::OnPlayerOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	auto PresetName = OverlappedComponent->GetCollisionProfileName();
-	if (PresetName.Compare(FName(TEXT("Player"))))
+	auto Player = Cast<ATPSPlayer>(OtherActor);
+	if (Player != nullptr)
 	{
-		auto Player = Cast<ATPSPlayer>(OtherActor);
-		if (Player != nullptr)
-		{
-			if(OverlapEmitter != nullptr) UGameplayStatics::SpawnEmitterAttached(OverlapEmitter, Player->GetMesh(), NAME_None , FVector(ForceInit), FRotator(ForceInit), FVector(0.5f, 0.5f, 1.f));
-			if (ItemOverlapSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), ItemOverlapSound, GetActorLocation());
+		if (OverlapEmitter != nullptr) UGameplayStatics::SpawnEmitterAttached(OverlapEmitter, Player->GetMesh(), NAME_None, FVector(ForceInit), FRotator(ForceInit), FVector(0.5f, 0.5f, 1.f));
+		if (ItemOverlapSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), ItemOverlapSound, GetActorLocation());
 
-			TArray<AActor*> OutActors; // 붙어있는 아이템이 있는지?
-			Player->GetAttachedActors(OutActors);
-			if (OutActors.Num() < 1) // 안 붙어있으면 생성해서 붙여준다.
-			{
-				auto NewItem = GetWorld()->SpawnActor(AItem::StaticClass());
-				NewItem->AttachToActor(Player, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
-			}
-			else
-			{
-				// 이미 아이템 붙어있으면 AddBall
-				if(OutActors.IsValidIndex(0)) Cast<AItem>(OutActors[0])->AddBall();
-			}
+		TArray<AActor*> OutActors; // 붙어있는 아이템이 있는지?
+		Player->GetAttachedActors(OutActors);
+		if (OutActors.Num() < 1) // 안 붙어있으면 생성해서 붙여준다.
+		{
+			auto NewItem = GetWorld()->SpawnActor(AItem::StaticClass());
+			NewItem->AttachToActor(Player, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
 		}
-		Destroy();
+		else
+		{
+			// 이미 아이템 붙어있으면 AddBall
+			if (OutActors.IsValidIndex(0)) Cast<AItem>(OutActors[0])->AddBall();
+		}
 	}
+	Destroy();
 }
 

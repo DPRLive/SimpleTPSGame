@@ -75,12 +75,9 @@ void AEnemy::AttackAreaOff()
 
 void AEnemy::OnOverlapAttackArea(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor != nullptr && OverlappedComponent->GetCollisionProfileName().Compare(FName(TEXT("Player"))))
+	auto Player = Cast<ATPSPlayer>(OtherActor);
+	if (Player != nullptr)
 	{
-		auto Player = Cast<ATPSPlayer>(OtherActor);
-		if (Player != nullptr)
-		{
-			Player->OnAttackDamage(50);
-		}
+		Player->OnAttackDamage(50);
 	}
 }

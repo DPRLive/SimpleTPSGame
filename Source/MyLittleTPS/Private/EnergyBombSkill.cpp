@@ -49,17 +49,11 @@ void AEnergyBombSkill::BeginPlay()
 
 void AEnergyBombSkill::OnBeginOverlapEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor != nullptr)
+	auto Enemy = Cast<AEnemy>(OtherActor);
+	if (Enemy != nullptr)
 	{
-		if (OverlappedComponent->GetCollisionProfileName().Compare(FName(TEXT("Enemy"))))
-		{
-			auto Enemy = Cast<AEnemy>(OtherActor);
-			if (Enemy != nullptr)
-			{
-				if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEmitter, Enemy->GetActorLocation(), FRotator(ForceInit), FVector(2.f));
-				if (HitSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, Enemy->GetActorLocation());
-				Enemy->FSM->OnAttackDamage(1000.f);
-			}
-		}
+		if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEmitter, Enemy->GetActorLocation(), FRotator(ForceInit), FVector(2.f));
+		if (HitSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, Enemy->GetActorLocation());
+		Enemy->FSM->OnAttackDamage(1000.f);
 	}
 }
