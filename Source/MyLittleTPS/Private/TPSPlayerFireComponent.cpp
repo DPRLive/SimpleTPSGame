@@ -140,15 +140,15 @@ void UTPSPlayerFireComponent::Fire()
 			Player->PlayAnimMontage(Anim->UpperMontage, 1.0f, TEXT("Fire"));
 
 			FVector StartPos = Player->CameraComp->GetComponentLocation();
-			FVector DestActorPos = Player->CameraComp->GetForwardVector() * 20000; // 200m까지는 잘 쏨
+			FVector DestActorPos = StartPos + Player->CameraComp->GetForwardVector() * 20000; // 200m까지는 잘 쏨
 			FHitResult Result;
 			FCollisionQueryParams Params;
 			Params.AddIgnoredActor(Player); // 내가 내총에 맞을수는 없지
 
-			// 50m 이내에 물체를 조준했다면 거기를 목표로 조준
+			// 물체를 조준했다면 거기를 목표로 조준
 			bool bHit = GetWorld()->LineTraceSingleByChannel(Result, StartPos, DestActorPos, ECollisionChannel::ECC_Visibility);
-			if (bHit) DestActorPos = Result.Location;
-			
+			if (bHit) DestActorPos = Result.ImpactPoint;
+
 			// 총을 발사할 전방방향 계산
 			BulletTrans.SetRotation(FQuat(UKismetMathLibrary::FindLookAtRotation(BulletTrans.GetLocation(), DestActorPos)));
 		}
@@ -160,7 +160,7 @@ void UTPSPlayerFireComponent::Fire()
 		CurrentTime = 0;
 
 		// 반동 추가
-		AddRecoil();
+		//AddRecoil();
 	}
 }
 

@@ -3,7 +3,7 @@
 
 #include "Bullet.h"
 #include <GameFramework/ProjectileMovementComponent.h>
-#include <Components/SphereComponent.h>
+#include <Components/BoxComponent.h>
 #include <Components/StaticMeshComponent.h>
 #include <Kismet/GameplayStatics.h>
 #include <Particles/ParticleSystem.h>
@@ -17,13 +17,13 @@ ABullet::ABullet()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
-	SphereComp->SetSphereRadius(10);
+	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
+	BoxComp->SetBoxExtent(FVector(8.f, 1.f, 2.f));
 	// 콜리전 bullet으로 설정
-	SphereComp->SetCollisionProfileName(TEXT("Bullet"));
-	SphereComp->SetGenerateOverlapEvents(false);
-	SphereComp->SetNotifyRigidBodyCollision(true); // 히트 이벤트 생성
-	SetRootComponent(SphereComp);
+	BoxComp->SetCollisionProfileName(TEXT("Bullet"));
+	BoxComp->SetGenerateOverlapEvents(false);
+	BoxComp->SetNotifyRigidBodyCollision(true); // 히트 이벤트 생성
+	SetRootComponent(BoxComp);
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshTemp(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_Pipe.Shape_Pipe'"));
@@ -58,7 +58,7 @@ void ABullet::BeginPlay()
 	Super::BeginPlay();
 	// 2초 뒤 삭제
 	SetLifeSpan(2.0f);
-	SphereComp->OnComponentHit.AddDynamic(this, &ABullet::OnBulletHit);
+	BoxComp->OnComponentHit.AddDynamic(this, &ABullet::OnBulletHit);
 }
 
 void ABullet::OnBulletHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)

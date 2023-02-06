@@ -20,7 +20,7 @@ protected:
 public:	
 
 	UPROPERTY(VisibleAnywhere, Category = Collision)
-		class USphereComponent* SphereComp;
+		class UBoxComponent* BoxComp;
 
 	UPROPERTY(VisibleAnywhere, Category = Mesh)
 		class UStaticMeshComponent* MeshComp;
