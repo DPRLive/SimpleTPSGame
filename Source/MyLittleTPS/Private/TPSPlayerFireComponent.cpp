@@ -160,7 +160,7 @@ void UTPSPlayerFireComponent::Fire()
 		CurrentTime = 0;
 
 		// 반동 추가
-		//AddRecoil();
+		AddRecoil();
 	}
 }
 

@@ -47,8 +47,23 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Gun)
 		USkeletalMeshComponent* GunMesh;
 
+	// 라이트
+	UPROPERTY(VisibleAnywhere, Category = Gun)
+		class USpotLightComponent* GunLight;
+
+	UPROPERTY(EditDefaultsOnly, Category = Gun)
+		class USoundWave* LightOnSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = Gun)
+		class USoundWave* LightOffSound;
+
+	bool bLightOn = false;
+
+	UFUNCTION()
+		void LightToggle();
+
 	// 이동담당 컴포넌트
-	UPROPERTY(VisibleAnywhere, Category = PlayerComponent)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = PlayerComponent)
 		class UTPSPlayerBaseComponent* MoveComp;
 
 	// 총알 발사 담당 컴포넌트

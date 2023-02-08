@@ -59,6 +59,12 @@ void UTPSPlayerMoveComponent::Run()
 {
 	if (PlayerMoveComp == nullptr) return;
 
-	if(PlayerMoveComp->MaxWalkSpeed > WalkSpeed) PlayerMoveComp->MaxWalkSpeed = WalkSpeed;
-	else PlayerMoveComp->MaxWalkSpeed = RunSpeed;
+	if (PlayerMoveComp->MaxWalkSpeed > WalkSpeed)
+	{
+		PlayerMoveComp->MaxWalkSpeed = WalkSpeed;
+	}
+	else
+	{
+		PlayerMoveComp->MaxWalkSpeed = RunSpeed;
+	}
 }

@@ -8,7 +8,9 @@
 #include "PlayerAnim.h"
 #include <GameFramework/SpringArmComponent.h>
 #include <Camera/CameraComponent.h>
+#include <Kismet/GameplayStatics.h>
 #include <Components/CapsuleComponent.h>
+#include <Components/SpotLightComponent.h>
 
 ATPSPlayer::ATPSPlayer()
 {
@@ -52,6 +54,21 @@ ATPSPlayer::ATPSPlayer()
 		GunMesh->SetupAttachment(GetMesh(), TEXT("hand_r_Socket"));
 	}
 
+	GunLight = CreateDefaultSubobject<USpotLightComponent>(TEXT("GunLight"));
+	GunLight->SetIntensity(50000.f);
+	GunLight->AttenuationRadius = 4000.f;
+	GunLight->InnerConeAngle = 15.f;
+	GunLight->OuterConeAngle = 25.f;
+	GunLight->SetVisibility(false);
+	GunLight->SetupAttachment(GunMesh, TEXT("LightPosition"));
+
+	// 라이트 사운드
+	ConstructorHelpers::FObjectFinder<USoundWave> LightOnSoundTemp(TEXT("/Script/Engine.SoundWave'/Game/Effects/Sounds/LightOn.LightOn'"));
+	if (LightOnSoundTemp.Succeeded()) LightOnSound = LightOnSoundTemp.Object;
+
+	ConstructorHelpers::FObjectFinder<USoundWave> LightOffSoundTemp(TEXT("/Script/Engine.SoundWave'/Game/Effects/Sounds/LightOff.LightOff'"));
+	if (LightOffSoundTemp.Succeeded()) LightOffSound = LightOffSoundTemp.Object;
+
 	// 이동 담당 컴포넌트 소유
 	MoveComp = CreateDefaultSubobject<UTPSPlayerMoveComponent>(TEXT("MoveComp"));
 	// 총알 발사 담당 컴포넌트 소유
@@ -81,6 +98,8 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	// 델리게이트 호출
 	InputBindingDelegate.Broadcast(PlayerInputComponent);
+
+	PlayerInputComponent->BindAction(TEXT("LightToggle"), IE_Pressed, this, &ATPSPlayer::LightToggle);
 }
 
 void ATPSPlayer::OnAttackDamage(float Damage)
@@ -98,4 +117,14 @@ void ATPSPlayer::OnAttackDamage(float Damage)
 		Hp -= Damage;
 		if (Anim != nullptr) PlayAnimMontage(Anim->UpperMontage, 1.2f, FName(TEXT("Hit")));
 	}
+}
+
+void ATPSPlayer::LightToggle()
+{
+	bLightOn = !bLightOn;
+
+	if (bLightOn && (LightOnSound != nullptr)) UGameplayStatics::PlaySoundAtLocation(GetWorld(), LightOnSound, GunMesh->GetSocketLocation(TEXT("LightPosition")));
+	else if (!bLightOn && (LightOffSound != nullptr)) UGameplayStatics::PlaySoundAtLocation(GetWorld(), LightOffSound, GunMesh->GetSocketLocation(TEXT("LightPosition")));
+
+	GunLight->SetVisibility(bLightOn);
 }

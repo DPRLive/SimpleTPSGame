@@ -21,10 +21,10 @@ protected:
 	virtual void SetupPlayerInput(class UInputComponent* PlayerInputComponent) override;
 public:
 
-	UPROPERTY(EditDefaultsOnly, Category = Speed)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Speed)
 		float WalkSpeed = 300;
 
-	UPROPERTY(EditDefaultsOnly, Category = Speed)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Speed)
 		float RunSpeed = 600;
 
 	// 카메라 이동
