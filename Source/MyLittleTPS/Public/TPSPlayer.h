@@ -27,10 +27,10 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(EditDefaultsOnly, Category = Settings)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Settings)
 		float MaxHp = 1000;
 
-	UPROPERTY(VisibleAnywhere, Category = Settings)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
 		float Hp;
 
 	UFUNCTION(BlueprintCallable, Category = Event)

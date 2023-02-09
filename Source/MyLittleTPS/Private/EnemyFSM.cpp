@@ -9,6 +9,7 @@
 #include <Kismet/GameplayStatics.h>
 #include <Kismet/KismetMathLibrary.h>
 #include <GameFramework/CharacterMovementComponent.h>
+#include "ItemDrop.h"
 
 UEnemyFSM::UEnemyFSM()
 {
@@ -98,6 +99,10 @@ void UEnemyFSM::OnAttackDamage(float Damage)
 	{
 		Hp = 0;
 		Owner->SetActorEnableCollision(false);
+
+		// 20프로의 확률로 아이템 드랍
+		uint8 Rand = FMath::RandRange(1, 10);
+		if (Rand <= 2) GetWorld()->SpawnActor(AItemDrop::StaticClass(), &Owner->GetActorTransform());
 		PlayAnim(TEXT("Die"), EEnemyState::Die);
 	}
 	else

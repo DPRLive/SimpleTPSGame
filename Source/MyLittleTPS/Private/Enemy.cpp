@@ -17,7 +17,6 @@ AEnemy::AEnemy()
 		Collision->SetCollisionProfileName(TEXT("Enemy"));
 	}
 
-
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ParagonKhaimera/Characters/Heroes/Khaimera/Meshes/Khaimera.Khaimera'"));
 	if (TempMesh.Succeeded())
 	{

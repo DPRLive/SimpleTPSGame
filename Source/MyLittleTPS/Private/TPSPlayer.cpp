@@ -43,6 +43,7 @@ ATPSPlayer::ATPSPlayer()
 	{
 		GetMesh()->SetSkeletalMesh(TempMesh.Object);
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
 	GunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
@@ -105,7 +106,7 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 void ATPSPlayer::OnAttackDamage(float Damage)
 {
 	auto Anim = Cast<UPlayerAnim>(GetMesh()->GetAnimInstance());
-	if (Hp - Damage < 0)
+	if (Hp - Damage <= 0)
 	{
 		Hp = 0;
 		Controller->UnPossess();
