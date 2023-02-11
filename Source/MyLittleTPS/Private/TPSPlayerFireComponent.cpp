@@ -170,6 +170,12 @@ void UTPSPlayerFireComponent::AddRecoil()
 	FVector NewRecoilValue = RecoilCurve->GetVectorValue(RecoilCount);
 	RecoilValue.X = NewRecoilValue.X;
 	RecoilValue.Y = NewRecoilValue.Y;
+
+	if (IsZoom) // 줌 상태면 반동 감소
+	{
+		RecoilValue.X *= 0.5;
+		RecoilValue.Y *= 0.5;
+	}
 }
 
 void UTPSPlayerFireComponent::SwapAutoFire()

@@ -40,7 +40,7 @@ ABullet::ABullet()
 	MoveComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MoveComp"));
 	MoveComp->InitialSpeed = BulletInitSpeed;
 	MoveComp->MaxSpeed = BulletMaxSpeed;
-	MoveComp->ProjectileGravityScale = 0.2f;
+	MoveComp->ProjectileGravityScale = 1.f;
 	MoveComp->SetUpdatedComponent(RootComponent);
 
 	ConstructorHelpers::FObjectFinder<UParticleSystem> EmitterTemp(TEXT("/Script/Engine.ParticleSystem'/Game/Effects/P_BulletHit.P_BulletHit'"));

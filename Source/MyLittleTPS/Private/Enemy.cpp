@@ -22,6 +22,7 @@ AEnemy::AEnemy()
 	{
 		GetMesh()->SetSkeletalMesh(TempMesh.Object);
 		GetMesh()->SetRelativeScale3D(FVector(0.85f));
+		GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90.f), FRotator(0, -90.f, 0));
 	}
 
@@ -32,7 +33,7 @@ AEnemy::AEnemy()
 
 	AttackAreaR = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackAreaR"));
 	AttackAreaR->SetBoxExtent(FVector(5.f, 20.f, 15.f));
-	AttackAreaL->SetCollisionProfileName(TEXT("EnemyAttackArea"));
+	AttackAreaR->SetCollisionProfileName(TEXT("EnemyAttackArea"));
 	AttackAreaR->SetupAttachment(GetMesh(), TEXT("AttackAreaR"));
 
 	FSM = CreateDefaultSubobject<UEnemyFSM>(TEXT("FSM"));

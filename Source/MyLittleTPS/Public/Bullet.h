@@ -30,10 +30,10 @@ public:
 		class UProjectileMovementComponent* MoveComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
-		float BulletInitSpeed = 60000;
+		float BulletInitSpeed = 40000;
 
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
-		float BulletMaxSpeed = 80000;
+		float BulletMaxSpeed = 40000;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
 		class UParticleSystem* HitEmitter;

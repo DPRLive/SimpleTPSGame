@@ -40,5 +40,8 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSMComponent)
 		class UEnemyFSM* FSM;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = Event)
+		void OnEnemyDie();
 	
 };

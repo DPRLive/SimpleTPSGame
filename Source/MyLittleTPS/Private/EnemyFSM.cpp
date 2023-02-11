@@ -99,7 +99,7 @@ void UEnemyFSM::OnAttackDamage(float Damage)
 	{
 		Hp = 0;
 		Owner->SetActorEnableCollision(false);
-
+		Owner->OnEnemyDie(); // 스코어 올리기 위한 블루프린트 이벤트 호출
 		// 20프로의 확률로 아이템 드랍
 		uint8 Rand = FMath::RandRange(1, 10);
 		if (Rand <= 2) GetWorld()->SpawnActor(AItemDrop::StaticClass(), &Owner->GetActorTransform());

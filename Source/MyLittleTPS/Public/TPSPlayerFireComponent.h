@@ -60,7 +60,6 @@ public:
 
 	// รั น฿ป็
 	bool IsAutoFire = false;
-	// FTimerHandle FireTimer;
 	void InputFire();
 	void StopFire();
 	void Fire();
