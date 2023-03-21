@@ -40,12 +40,12 @@ void UPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 	}
 }
 
-void UPlayerAnim::OnEndReload()
+void UPlayerAnim::OnEndReload(bool Interruption)
 {
 	auto Player = Cast<ATPSPlayer>(TryGetPawnOwner());
 	if (Player != nullptr)
 	{
 		auto FireComp = Cast<UTPSPlayerFireComponent>(Player->FireComp);
-		FireComp->EndReload();
+		FireComp->EndReload(Interruption);
 	}
 }

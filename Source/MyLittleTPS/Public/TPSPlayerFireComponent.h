@@ -69,8 +69,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
 		uint8 MaxMag = 30;
 
-	UFUNCTION()
-		void EndReload();
+	void EndReload(bool Interruption);
 	// ¡‹¿Œ / ¡‹æ∆øÙ
 	bool IsZoom = false;
 	void Zoom();

@@ -47,7 +47,7 @@ public:
 		float WalkSpeed = 500.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
-		float AttackRange = 150.f;
+		float AttackRange = 250.f;
 	
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
 		float Hp = 1000.f;

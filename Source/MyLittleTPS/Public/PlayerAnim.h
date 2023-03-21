@@ -39,5 +39,5 @@ public:
 		class UAnimMontage* FullMontage;
 
 	UFUNCTION(BlueprintCallable, Category = Event)
-		void OnEndReload();
+		void OnEndReload(bool Interruption);
 };

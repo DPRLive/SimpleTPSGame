@@ -96,10 +96,10 @@ void UTPSPlayerFireComponent::ReloadState()
 	Player->PlayAnimMontage(Anim->UpperMontage, 1.0f, TEXT("Reload"));
 }
 
-void UTPSPlayerFireComponent::EndReload()
+void UTPSPlayerFireComponent::EndReload(bool Interruption)
 {
 	//Anim Notify로 장전 모션 끝나면 장전
-	Mag = MaxMag;
+	if(!Interruption) Mag = MaxMag;
 	GunState = EGunState::Idle;
 }
 
