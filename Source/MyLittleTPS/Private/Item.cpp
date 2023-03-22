@@ -2,8 +2,8 @@
 
 
 #include "Item.h"
-#include "Enemy.h"
-#include "EnemyFSM.h"
+#include "Characters/Enemy.h"
+#include "Components/EnemyFSM.h"
 #include <Components/SceneComponent.h>
 #include <GameFramework/RotatingMovementComponent.h>
 #include <Components/SphereComponent.h>

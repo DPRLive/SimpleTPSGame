@@ -10,8 +10,8 @@
 #include <Materials/Material.h>
 #include <Kismet/KismetMathLibrary.h>
 #include <Components/DecalComponent.h>
-#include "EnemyFSM.h"
-#include "Enemy.h"
+#include "Components/EnemyFSM.h"
+#include "Characters/Enemy.h"
 
 ABullet::ABullet()
 {

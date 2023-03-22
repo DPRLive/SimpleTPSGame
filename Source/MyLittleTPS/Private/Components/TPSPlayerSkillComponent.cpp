@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "TPSPlayerSkillComponent.h"
-#include "TPSPlayer.h"
-#include "EnergyBombSkill.h"
-#include "EnergyShootSkill.h"
+#include "Components/TPSPlayerSkillComponent.h"
+#include "Characters/TPSPlayer.h"
+#include "Skills/EnergyBombSkill.h"
+#include "SKills/EnergyShootSkill.h"
 #include <Kismet/GameplayStatics.h>
 #include <Particles/ParticleSystem.h>
 

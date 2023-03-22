@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "TPSPlayer.h"
-#include "TPSPlayerMoveComponent.h"
-#include "TPSPlayerFireComponent.h"
-#include "TPSPlayerSkillComponent.h"
+#include "Characters/TPSPlayer.h"
+#include "Components/TPSPlayerMoveComponent.h"
+#include "Components/TPSPlayerFireComponent.h"
+#include "Components/TPSPlayerSkillComponent.h"
 #include "PlayerAnim.h"
 #include <GameFramework/SpringArmComponent.h>
 #include <Camera/CameraComponent.h>

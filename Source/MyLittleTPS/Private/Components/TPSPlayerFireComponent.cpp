@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "TPSPlayerFireComponent.h"
+#include "Components/TPSPlayerFireComponent.h"
 #include "Bullet.h"
-#include "TPSPlayer.h"
+#include "Characters/TPSPlayer.h"
 #include "PlayerAnim.h"
 #include <Camera/CameraComponent.h>
 #include <Kismet/KismetMathLibrary.h>

@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "TPSPlayerMoveComponent.h"
-#include "TPSPlayer.h"
+#include "Components/TPSPlayerMoveComponent.h"
+#include "Characters/TPSPlayer.h"
 #include <GameFramework/CharacterMovementComponent.h>
 
 UTPSPlayerMoveComponent::UTPSPlayerMoveComponent()

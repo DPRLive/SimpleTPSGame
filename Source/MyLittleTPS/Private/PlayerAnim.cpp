@@ -2,8 +2,8 @@
 
 
 #include "PlayerAnim.h"
-#include "TPSPlayer.h"
-#include "TPSPlayerFireComponent.h"
+#include "Characters/TPSPlayer.h"
+#include "Components/TPSPlayerFireComponent.h"
 #include <GameFramework/PawnMovementComponent.h>
 #include <Camera/CameraComponent.h>
 #include <Kismet/KismetMathLibrary.h>

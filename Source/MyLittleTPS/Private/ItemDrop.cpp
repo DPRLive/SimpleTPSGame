@@ -6,7 +6,7 @@
 #include <Particles/ParticleSystem.h>
 #include <Particles/ParticleSystemComponent.h>
 #include <Kismet/GameplayStatics.h>
-#include "TPSPlayer.h"
+#include "Characters/TPSPlayer.h"
 #include "Item.h"
 
 AItemDrop::AItemDrop()

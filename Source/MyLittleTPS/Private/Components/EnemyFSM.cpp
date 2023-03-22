@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "EnemyFSM.h"
-#include "Enemy.h"
-#include "TPSPlayer.h"
+#include "Components/EnemyFSM.h"
+#include "Characters/Enemy.h"
+#include "Characters/TPSPlayer.h"
 #include <animation/AnimMontage.h>
 #include <AIController.h>
 #include <Kismet/GameplayStatics.h>

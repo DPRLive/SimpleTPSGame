@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "EnergyBombSkill.h"
-#include "Enemy.h"
-#include "EnemyFSM.h"
+#include "Skills/EnergyBombSkill.h"
+#include "Characters/Enemy.h"
+#include "Components/EnemyFSM.h"
 #include <Components/SphereComponent.h>
 #include <Kismet/GameplayStatics.h>
 #include <Particles/ParticleSystem.h>
