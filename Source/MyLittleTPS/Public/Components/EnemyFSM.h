@@ -11,6 +11,7 @@ enum class EEnemyState : uint8
 {
 	Move,
 	Attack,
+	LDAttack,
 	Die,
 	AnimPlay,
 };
@@ -52,9 +53,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
 		float Hp = 1000.f;
 
+	UPROPERTY(EditDefaultsOnly, Category = Setting)
+		float LDAttackRange = 3000.f;
+
 	// State ฐüทร
-	void MoveState();
-	void AttackState();
+	virtual void MoveState();
+	virtual void AttackState();
+	void LDAttackState();
 
 	float DieTime = 0.f;
 	void DieState(float DeltaTime);
@@ -63,7 +68,10 @@ public:
 
 	void PlayAnim(const FName& AnimName, EEnemyState DestState);
 
-	EEnemyState DestState = EEnemyState::Move;
 	UFUNCTION(BlueprintCallable, Category = Event)
 		void OnEndPlayAnim();
+
+private:
+	bool IsCanAttackPlayer();
+	EEnemyState DestState = EEnemyState::Move;
 };

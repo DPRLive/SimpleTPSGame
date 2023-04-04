@@ -51,6 +51,9 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	case EEnemyState::Attack:
 		AttackState();
 		break;
+	case EEnemyState::LDAttack:
+		LDAttackState();
+		break;
 	case EEnemyState::Die:
 		DieState(DeltaTime);
 		break;
@@ -70,10 +73,16 @@ void UEnemyFSM::MoveState()
 		Req.SetGoalActor(Target.Get());
 		AI->MoveTo(Req);
 	}
-	if (FVector::Distance(Owner->GetActorLocation(), Target->GetActorLocation()) <= AttackRange)
+	if (FVector::Distance(Owner->GetActorLocation(), Target->GetActorLocation()) <= AttackRange) // 할 수 있으면 근거리 공격
 	{
 		EnemyState = EEnemyState::Attack;
 	}
+	else if (FVector::Distance(Owner->GetActorLocation(), Target->GetActorLocation()) <= LDAttackRange && 
+		IsCanAttackPlayer()) // 원거리 공격
+	{
+		EnemyState = EEnemyState::LDAttack;
+	}
+	
 }
 
 void UEnemyFSM::AttackState()
@@ -86,7 +95,20 @@ void UEnemyFSM::AttackState()
 	else
 	{
 		uint8 Rand = FMath::RandRange(0, 2);
-		PlayAnim(FName(*FString::Printf(TEXT("Attack%d"), Rand)), EEnemyState::Attack);
+		PlayAnim(FName(*FString::Printf(TEXT("Attack%d"), Rand)), EEnemyState::Move);
+	}
+}
+
+void UEnemyFSM::LDAttackState()
+{
+	AI->StopMovement();
+	if (FVector::Distance(Owner->GetActorLocation(), Target->GetActorLocation()) > LDAttackRange || !IsCanAttackPlayer())
+	{
+		EnemyState = EEnemyState::Move;
+	}
+	else
+	{
+		PlayAnim("LDAttack", EEnemyState::Move);
 	}
 }
 
@@ -126,6 +148,7 @@ void UEnemyFSM::DieState(float DeltaTime)
 
 void UEnemyFSM::PlayAnim(const FName& AnimName, EEnemyState NewDestState)
 {
+	Owner->AttackAreaOff(); // 공격하다가 다른 몽타주 처리 시를 대비해 AttackArea를 꺼버림
 	EnemyState = EEnemyState::AnimPlay;
 	Owner->StopAnimMontage(EnemyMontage);
 	Owner->PlayAnimMontage(EnemyMontage, 1.f, AnimName);
@@ -135,4 +158,36 @@ void UEnemyFSM::PlayAnim(const FName& AnimName, EEnemyState NewDestState)
 void UEnemyFSM::OnEndPlayAnim()
 {
 	EnemyState = DestState;
+}
+
+bool UEnemyFSM::IsCanAttackPlayer()
+{
+	FVector TargetDir = Target->GetActorLocation() - Owner->GetActorLocation();
+	TargetDir.Normalize();
+
+	FHitResult Result;
+	FVector StartPos = Owner->GetActorLocation();
+	FVector EndPos = StartPos + TargetDir * LDAttackRange;
+	FCollisionQueryParams Params;
+	// TODO : Enemy는 트레이스 X로 변경하기
+	
+	FCollisionShape SweepSphere = FCollisionShape::MakeSphere(50.f); // 50 짜리 크기 공격 할거임
+	// bool bHit = GetWorld()->LineTraceSingleByChannel(Result, StartPos, EndPos, ECollisionChannel::ECC_Visibility, Params);
+
+	//////////////////////////////// trace debug
+	const FName TraceTag("MyTraceTag");
+	GetWorld()->DebugDrawTraceTag = TraceTag;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.TraceTag = TraceTag;
+	// /////////////////////////////
+
+	// 스킬 크기만큼 Trace.
+	bool bHit = GetWorld()->SweepSingleByProfile(Result, StartPos, EndPos, FQuat(ForceInit), "EnemySkill", SweepSphere, CollisionParams);
+	if (bHit)
+	{
+		auto Player = Cast<ATPSPlayer>(Result.GetActor());
+
+		if (Player != nullptr) return true;
+	}
+	return false;
 }

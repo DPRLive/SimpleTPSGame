@@ -146,7 +146,7 @@ void UTPSPlayerFireComponent::Fire()
 			Params.AddIgnoredActor(Player); // 내가 내총에 맞을수는 없지
 
 			// 물체를 조준했다면 거기를 목표로 조준
-			bool bHit = GetWorld()->LineTraceSingleByChannel(Result, StartPos, DestActorPos, ECollisionChannel::ECC_Visibility);
+			bool bHit = GetWorld()->LineTraceSingleByChannel(Result, StartPos, DestActorPos, ECollisionChannel::ECC_Visibility, Params);
 			if (bHit) DestActorPos = Result.ImpactPoint;
 
 			// 총을 발사할 전방방향 계산
