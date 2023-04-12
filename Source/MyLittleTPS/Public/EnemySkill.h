@@ -14,20 +14,31 @@ class MYLITTLETPS_API AEnemySkill : public AActor
 public:	
 	AEnemySkill();
 
-	UPROPERTY(EditAnywhere, Category = "Setting")
+	UPROPERTY(EditAnywhere, Category = Setting)
 	float SkillRadius = 50.f;
+
+	UPROPERTY(EditAnywhere, Category = Setting)
+	float SkillSpeed = 1000.f;
+
+	UPROPERTY(EditAnywhere, Category = Setting)
+	float SkillDamage = 100.f;
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere, Category = "Collision | Setting")
+	UPROPERTY(VisibleAnywhere, Category = Collision)
 	TObjectPtr<class USphereComponent> Collision;
 
-	UPROPERTY(VisibleAnywhere, Category = "Particle | Setting")
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
 	TObjectPtr<class UParticleSystemComponent> WaterBall;
 
-	UPROPERTY(EditAnywhere, Category = "Movement | Setting")
+	UPROPERTY(VisibleAnywhere, Category = Movement)
 	TObjectPtr<class UProjectileMovementComponent> MoveComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+	TObjectPtr<class UParticleSystem> EnemyHitEmitter;
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void OnEnemySkillHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };

@@ -1,13 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+癤�// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "EnemySkill.h"
+#include "Characters/TPSPlayer.h"
 #include <Components/SphereComponent.h>
 #include <Particles/ParticleSystem.h>
 #include <Particles/ParticleSystemComponent.h>
 #include <GameFramework/ProjectileMovementComponent.h>
 
-// TODO : 몬스터 원거리 공격 구성하기. 발사 로직 구성하기.
+#include "Kismet/GameplayStatics.h"
+
 AEnemySkill::AEnemySkill()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -27,18 +29,30 @@ AEnemySkill::AEnemySkill()
 
 	MoveComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MoveComp"));
 	MoveComp->ProjectileGravityScale = 0.f;
-	//MoveComp->InitialSpeed = 
+	MoveComp->InitialSpeed = SkillSpeed;
+	MoveComp->MaxSpeed = SkillSpeed;
 }
 
 void AEnemySkill::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Collision->OnComponentHit.AddDynamic(this, &AEnemySkill::OnEnemySkillHit);
 }
 
 void AEnemySkill::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AEnemySkill::OnEnemySkillHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	auto Target = Cast<ATPSPlayer>(OtherActor);
+	if(IsValid(Target))
+	{
+		Target->OnAttackDamage(SkillDamage);
+	}
+	if(IsValid(EnemyHitEmitter)) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), EnemyHitEmitter, Hit.ImpactPoint);
+	Destroy();
 }
 

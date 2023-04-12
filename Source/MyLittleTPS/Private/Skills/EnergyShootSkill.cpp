@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "SKills/EnergyShootSkill.h"
@@ -67,6 +67,7 @@ void AEnergyShootSkill::OnBeginOverlapEnemy(UPrimitiveComponent* OverlappedCompo
 	{
 		if (SkillHitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SkillHitEmitter, Enemy->GetActorLocation());
 		if (SkillHitSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), SkillHitSound, Enemy->GetActorLocation());
-		Enemy->FSM->OnAttackDamage(1000.f);
+		UGameplayStatics::ApplyDamage(Enemy, 1000.f, nullptr, nullptr, nullptr);
+		//Enemy->GetEnemyFSM()->TakeDamage(1000.f);
 	}
 }

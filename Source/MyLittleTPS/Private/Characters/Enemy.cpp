@@ -1,11 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/Enemy.h"
 #include "Components/EnemyFSM.h"
 #include "Characters/TPSPlayer.h"
+#include "EnemySkill.h"
 #include <Components/CapsuleComponent.h>
 #include <Components/BoxComponent.h>
+#include <Kismet/KismetMathLibrary.h>
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(Enemy)
 
 AEnemy::AEnemy()
 {
@@ -38,20 +42,37 @@ AEnemy::AEnemy()
 
 	FSM = CreateDefaultSubobject<UEnemyFSM>(TEXT("FSM"));
 
-	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned; // ���� �Ǵ� ���� ��ġ�� AIContoller �ڵ� pose
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned; // 스폰 또는 월드 배치시 AIContoller 자동 pose
 }
 
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+	Hp = MaxHp;
 	AttackAreaL->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnOverlapAttackArea);
 	AttackAreaR->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnOverlapAttackArea);
 	AttackAreaOff();
 }
 
-void AEnemy::Tick(float DeltaTime)
+float AEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
 {
-	Super::Tick(DeltaTime);
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	AttackAreaOff(); // 공격 애니메이션 중에 상태가 바뀌었을 수 있으니 공격 Area 체크 중지
+	
+	if(Hp - Damage > 0)
+	{
+		Hp -= Damage;
+		FSM->TakeDamage();
+	}
+	else
+	{
+		Hp = 0;
+		SetActorEnableCollision(false); // 사망 판정 시 Collision OFF
+		OnEnemyDie.Broadcast(); // 바인딩 된 사망 후 로직들 실행
+	}
+	return Damage;
 }
 
 void AEnemy::AttackAreaOn()
@@ -66,11 +87,20 @@ void AEnemy::AttackAreaOff()
 	AttackAreaR->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+void AEnemy::ActivateEnemySkill() // Target의 위치 (플레이어)를 알아내 그 쪽 Rotation으로 스킬 생성
+{
+	if(IsValid(FSM))
+	{
+		FRotator SkillRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), FSM->Target->GetActorLocation());
+		GetWorld()->SpawnActor<AEnemySkill>(EnemySkill, GetActorLocation(), SkillRotation);
+	}
+}
+
 void AEnemy::OnOverlapAttackArea(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	auto Player = Cast<ATPSPlayer>(OtherActor);
 	if (Player != nullptr)
 	{
-		Player->OnAttackDamage(50);
+		Player->OnAttackDamage(EnemyAttackDamage);
 	}
 }

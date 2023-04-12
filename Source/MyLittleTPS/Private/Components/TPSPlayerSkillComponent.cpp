@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Components/TPSPlayerSkillComponent.h"
@@ -50,26 +50,26 @@ void UTPSPlayerSkillComponent::Active()
 
 void UTPSPlayerSkillComponent::ActiveHeal()
 {
-	// ÀÌ¹ÌÅÍ ½ºÆù + »ç¿îµå Àç»ý?
+	// ì´ë¯¸í„° ìŠ¤í° + ì‚¬ìš´ë“œ ìž¬ìƒ?
 	if (HealEmitter != nullptr) UGameplayStatics::SpawnEmitterAttached(HealEmitter, Player->GetMesh(), NAME_None, FVector(ForceInit), FRotator(ForceInit), FVector(0.5f, 0.5f, 1.f));
 	if (HealSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), HealSound, Player->GetActorLocation());
 
 	if (Player->Hp + 300 > Player->MaxHp) Player->Hp = Player->MaxHp;
 	else Player->Hp += 300;
-	// ³lÅ¸ÀÓ °É±â
+	// ì¿¹íƒ€ìž„ ê±¸ê¸°
 	GetWorld()->GetTimerManager().SetTimer(CoolTimerHandle, 20.f, false);
 }
 
 void UTPSPlayerSkillComponent::ActiveEnergyBomb()
 {
 	GetWorld()->SpawnActor<AEnergyBombSkill>(AEnergyBombSkill::StaticClass(), Player->GetTransform());
-	// ³lÅ¸ÀÓ °É±â
+	// ì¿¹íƒ€ìž„ ê±¸ê¸°
 	GetWorld()->GetTimerManager().SetTimer(CoolTimerHandle, 30.f, false);
 }
 
 void UTPSPlayerSkillComponent::ActiveEnergyShoot()
 {
 	GetWorld()->SpawnActor<AEnergyShootSkill>(AEnergyShootSkill::StaticClass(), Player->GetTransform());
-	// ³lÅ¸ÀÓ °É±â
+	// ì¿¹íƒ€ìž„ ê±¸ê¸°
 	GetWorld()->GetTimerManager().SetTimer(CoolTimerHandle, 15.f, false);
 }

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Components/TPSPlayerBaseComponent.h"
@@ -9,7 +9,7 @@ UTPSPlayerBaseComponent::UTPSPlayerBaseComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	// initializeComponent »ç¿ë ¼±¾ğ
+	// initializeComponent ì‚¬ìš© ì„ ì–¸
 	bWantsInitializeComponent = true;
 }
 
@@ -21,10 +21,10 @@ void UTPSPlayerBaseComponent::BeginPlay()
 
 void UTPSPlayerBaseComponent::InitializeComponent()
 {
-	// Super ²À!!!
+	// Super ê¼­!!!
 	Super::InitializeComponent();
 
-	// Begin Play Àü¿¡ Player¸¦ ¾Ë°í ÀÖ¾î¾ß ÇÔ.
+	// Begin Play ì „ì— Playerë¥¼ ì•Œê³  ìˆì–´ì•¼ í•¨.
 	Player = Cast<ATPSPlayer>(GetOwner());
 	if (Player == nullptr) return;
 

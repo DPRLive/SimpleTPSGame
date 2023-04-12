@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "ItemDrop.h"
@@ -55,16 +55,16 @@ void AItemDrop::OnPlayerOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 		if (OverlapEmitter != nullptr) UGameplayStatics::SpawnEmitterAttached(OverlapEmitter, Player->GetMesh(), NAME_None, FVector(ForceInit), FRotator(ForceInit), FVector(0.5f, 0.5f, 1.f));
 		if (ItemOverlapSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), ItemOverlapSound, GetActorLocation());
 
-		TArray<AActor*> OutActors; // ºÙ¾îÀÖ´Â ¾ÆÀÌÅÛÀÌ ÀÖ´ÂÁö?
+		TArray<AActor*> OutActors; // ë¶™ì–´ìˆëŠ” ì•„ì´í…œì´ ìˆëŠ”ì§€?
 		Player->GetAttachedActors(OutActors);
-		if (OutActors.Num() < 1) // ¾È ºÙ¾îÀÖÀ¸¸é »ı¼ºÇØ¼­ ºÙ¿©ÁØ´Ù.
+		if (OutActors.Num() < 1) // ì•ˆ ë¶™ì–´ìˆìœ¼ë©´ ìƒì„±í•´ì„œ ë¶™ì—¬ì¤€ë‹¤.
 		{
 			auto NewItem = GetWorld()->SpawnActor(AItem::StaticClass());
 			NewItem->AttachToActor(Player, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
 		}
 		else
 		{
-			// ÀÌ¹Ì ¾ÆÀÌÅÛ ºÙ¾îÀÖÀ¸¸é AddBall
+			// ì´ë¯¸ ì•„ì´í…œ ë¶™ì–´ìˆìœ¼ë©´ AddBall
 			if (OutActors.IsValidIndex(0)) Cast<AItem>(OutActors[0])->AddBall();
 		}
 	}

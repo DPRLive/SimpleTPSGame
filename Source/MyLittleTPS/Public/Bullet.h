@@ -25,15 +25,15 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Mesh)
 		class UStaticMeshComponent* MeshComp;
 
-	// √—æÀ ¿Ãµø
+	// Ï¥ùÏïå Ïù¥Îèô
 	UPROPERTY(VisibleAnywhere, Category = Component)
 		class UProjectileMovementComponent* MoveComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
-		float BulletInitSpeed = 40000;
+		float BulletInitSpeed = 40000.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
-		float BulletMaxSpeed = 40000;
+		float BulletMaxSpeed = 40000.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
 		class UParticleSystem* HitEmitter;

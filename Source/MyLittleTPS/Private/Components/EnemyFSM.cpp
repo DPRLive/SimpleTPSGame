@@ -1,15 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Components/EnemyFSM.h"
 #include "Characters/Enemy.h"
 #include "Characters/TPSPlayer.h"
+#include "ItemDrop.h"
 #include <animation/AnimMontage.h>
 #include <AIController.h>
 #include <Kismet/GameplayStatics.h>
-#include <Kismet/KismetMathLibrary.h>
 #include <GameFramework/CharacterMovementComponent.h>
-#include "ItemDrop.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(EnemyFSM)
 
 UEnemyFSM::UEnemyFSM()
 {
@@ -22,12 +23,13 @@ UEnemyFSM::UEnemyFSM()
 void UEnemyFSM::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	Owner = Cast<AEnemy>(GetOwner());
 	if (Owner != nullptr)
 	{
 		AI = Cast<AAIController>(Owner->GetController());
 		Cast<UCharacterMovementComponent>(Owner->GetMovementComponent())->MaxWalkSpeed = WalkSpeed;
+		Owner->OnEnemyDie.AddDynamic(this, &UEnemyFSM::EnemyDie);
 	}
 
 	auto Actor = UGameplayStatics::GetActorOfClass(GetWorld(), ATPSPlayer::StaticClass());	
@@ -65,24 +67,30 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 void UEnemyFSM::MoveState()
 {
 	if (!Target.IsValid()) return;
+	TraceInterval += GetWorld()->GetDeltaSeconds();
 	
-	// NavMeshVolumeÀ» ÅëÇØ ¸ñÇ¥¿¡°Ô ÀÌµ¿ AI->MoveToActor(Target.Get()); AI->MoveToLocation(Target->GetActorLocation());
+	// NavMeshVolumeì„ í†µí•´ ëª©í‘œì—ê²Œ ì´ë™
 	if (!(AI->GetMoveStatus() == EPathFollowingStatus::Moving))
 	{
 		FAIMoveRequest Req;
 		Req.SetGoalActor(Target.Get());
 		AI->MoveTo(Req);
 	}
-	if (FVector::Distance(Owner->GetActorLocation(), Target->GetActorLocation()) <= AttackRange) // ÇÒ ¼ö ÀÖÀ¸¸é ±Ù°Å¸® °ø°İ
-	{
+	if (FVector::Distance(Owner->GetActorLocation(), Target->GetActorLocation()) <= AttackRange) // í•  ìˆ˜ ìˆìœ¼ë©´ ê·¼ê±°ë¦¬ ê³µê²©
+	{ 
 		EnemyState = EEnemyState::Attack;
 	}
-	else if (FVector::Distance(Owner->GetActorLocation(), Target->GetActorLocation()) <= LDAttackRange && 
-		IsCanAttackPlayer()) // ¿ø°Å¸® °ø°İ
+	else if (FVector::Distance(Owner->GetActorLocation(), Target->GetActorLocation()) <= LDAttackRange) // ì›ê±°ë¦¬ ê³µê²©
 	{
-		EnemyState = EEnemyState::LDAttack;
+		// ì´ë™í•˜ë©° 1ì´ˆì— í•œë²ˆì”© íŠ¸ë ˆì´ìŠ¤ ì§„í–‰
+		bool bCanAttackPlayer = false;
+		if(TraceInterval > 1.f)
+		{
+			bCanAttackPlayer = IsCanAttackPlayer();
+			TraceInterval = 0.f;
+		}
+		if(bCanAttackPlayer) EnemyState = EEnemyState::LDAttack;
 	}
-	
 }
 
 void UEnemyFSM::AttackState()
@@ -102,53 +110,47 @@ void UEnemyFSM::AttackState()
 void UEnemyFSM::LDAttackState()
 {
 	AI->StopMovement();
-	if (FVector::Distance(Owner->GetActorLocation(), Target->GetActorLocation()) > LDAttackRange || !IsCanAttackPlayer())
+	if (FVector::Distance(Owner->GetActorLocation(), Target->GetActorLocation()) <= AttackRange ||
+		FVector::Distance(Owner->GetActorLocation(), Target->GetActorLocation()) > LDAttackRange || !IsCanAttackPlayer())
 	{
 		EnemyState = EEnemyState::Move;
 	}
 	else
 	{
-		PlayAnim("LDAttack", EEnemyState::Move);
-	}
-}
-
-void UEnemyFSM::OnAttackDamage(float Damage)
-{
-	Owner->AttackAreaOff(); // °ø°İ ¾Ö´Ï¸ŞÀÌ¼Ç Áß¿¡ »óÅÂ°¡ ¹Ù²î¾úÀ» ¼ö ÀÖÀ¸´Ï °ø°İ Area Ã¼Å© ÁßÁö
-	AI->StopMovement();
-
-	if (Hp - Damage <= 0)
-	{
-		Hp = 0;
-		Owner->SetActorEnableCollision(false);
-		Owner->OnEnemyDie(); // ½ºÄÚ¾î ¿Ã¸®±â À§ÇÑ ºí·çÇÁ¸°Æ® ÀÌº¥Æ® È£Ãâ
-		// 20ÇÁ·ÎÀÇ È®·ü·Î ¾ÆÀÌÅÛ µå¶ø
-		uint8 Rand = FMath::RandRange(1, 10);
-		if (Rand <= 2) GetWorld()->SpawnActor(AItemDrop::StaticClass(), &Owner->GetActorTransform());
-		PlayAnim(TEXT("Die"), EEnemyState::Die);
-	}
-	else
-	{
-		Hp -= Damage;
-		// µ¥¹ÌÁö ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
-		uint8 Rand = FMath::RandRange(0, 2);
-		PlayAnim(FName(*FString::Printf(TEXT("Hit%d"), Rand)), EEnemyState::Move);
+		PlayAnim("LDAttack", EEnemyState::LDAttack);
 	}
 }
 
 void UEnemyFSM::DieState(float DeltaTime)
 { 
-	// Á×À½ ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³ª¸é ¾Æ·¡·Î ³»·Á°¡¸é¼­ ÅğÀå
-	FVector Dist = Owner->GetActorLocation() + (FVector::DownVector * (100 * DeltaTime)); // µî°¡¼Óµµ ¿îµ¿
+	// ì£½ìŒ ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚˜ë©´ ì•„ë˜ë¡œ ë‚´ë ¤ê°€ë©´ì„œ í‡´ì¥
+	FVector Dist = Owner->GetActorLocation() + (FVector::DownVector * (100 * DeltaTime)); // ë“±ê°€ì†ë„ ìš´ë™
 	Owner->SetActorLocation(Dist);
 
 	DieTime += DeltaTime;
 	if (DieTime >= 2.f) Owner->Destroy();
 }
 
+void UEnemyFSM::TakeDamage()
+{
+	AI->StopMovement();
+	// ë°ë¯¸ì§€ ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰
+	uint8 Rand = FMath::RandRange(0, 2);
+	PlayAnim(FName(*FString::Printf(TEXT("Hit%d"), Rand)), EEnemyState::Move);
+}
+
+void UEnemyFSM::EnemyDie()
+{
+	AI->StopMovement();
+	// 20í”„ë¡œì˜ í™•ë¥ ë¡œ ì•„ì´í…œ ë“œë
+	uint8 Rand = FMath::RandRange(1, 10);
+	if (Rand <= 2) GetWorld()->SpawnActor(AItemDrop::StaticClass(), &Owner->GetActorTransform());
+	PlayAnim(TEXT("Die"), EEnemyState::Die);
+}
+
 void UEnemyFSM::PlayAnim(const FName& AnimName, EEnemyState NewDestState)
 {
-	Owner->AttackAreaOff(); // °ø°İÇÏ´Ù°¡ ´Ù¸¥ ¸ùÅ¸ÁÖ Ã³¸® ½Ã¸¦ ´ëºñÇØ AttackArea¸¦ ²¨¹ö¸²
+	Owner->AttackAreaOff(); // ê³µê²©í•˜ë‹¤ê°€ ë‹¤ë¥¸ ëª½íƒ€ì£¼ ì²˜ë¦¬ ì‹œë¥¼ ëŒ€ë¹„í•´ AttackAreaë¥¼ êº¼ë²„ë¦¼
 	EnemyState = EEnemyState::AnimPlay;
 	Owner->StopAnimMontage(EnemyMontage);
 	Owner->PlayAnimMontage(EnemyMontage, 1.f, AnimName);
@@ -169,11 +171,8 @@ bool UEnemyFSM::IsCanAttackPlayer()
 	FVector StartPos = Owner->GetActorLocation();
 	FVector EndPos = StartPos + TargetDir * LDAttackRange;
 	FCollisionQueryParams Params;
-	// TODO : Enemy´Â Æ®·¹ÀÌ½º X·Î º¯°æÇÏ±â
 	
-	FCollisionShape SweepSphere = FCollisionShape::MakeSphere(50.f); // 50 Â¥¸® Å©±â °ø°İ ÇÒ°ÅÀÓ
-	// bool bHit = GetWorld()->LineTraceSingleByChannel(Result, StartPos, EndPos, ECollisionChannel::ECC_Visibility, Params);
-
+	FCollisionShape SweepSphere = FCollisionShape::MakeSphere(50.f); // 50 ì§œë¦¬ í¬ê¸° ê³µê²© í• ê±°ì„
 	//////////////////////////////// trace debug
 	const FName TraceTag("MyTraceTag");
 	GetWorld()->DebugDrawTraceTag = TraceTag;
@@ -181,7 +180,7 @@ bool UEnemyFSM::IsCanAttackPlayer()
 	CollisionParams.TraceTag = TraceTag;
 	// /////////////////////////////
 
-	// ½ºÅ³ Å©±â¸¸Å­ Trace.
+	// ìŠ¤í‚¬ í¬ê¸°ë§Œí¼ Trace.
 	bool bHit = GetWorld()->SweepSingleByProfile(Result, StartPos, EndPos, FQuat(ForceInit), "EnemySkill", SweepSphere, CollisionParams);
 	if (bHit)
 	{

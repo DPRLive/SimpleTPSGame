@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Skills/EnergyBombSkill.h"
@@ -38,7 +38,7 @@ void AEnergyBombSkill::BeginPlay()
 	Super::BeginPlay();
 	SkillRangeCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnergyBombSkill::OnBeginOverlapEnemy);
 
-	// ÀÌ¹ÌÅÍ & »ç¿îµå Àç»ý
+	// ì´ë¯¸í„° & ì‚¬ìš´ë“œ ìž¬ìƒ
 	if (SkillEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SkillEmitter, GetActorLocation());
 	if (SkillSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), SkillSound, GetActorLocation());
 
@@ -54,6 +54,8 @@ void AEnergyBombSkill::OnBeginOverlapEnemy(UPrimitiveComponent* OverlappedCompon
 	{
 		if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEmitter, Enemy->GetActorLocation(), FRotator(ForceInit), FVector(2.f));
 		if (HitSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, Enemy->GetActorLocation());
-		Enemy->FSM->OnAttackDamage(1000.f);
+		UGameplayStatics::ApplyDamage(Enemy, 1000.f, nullptr, nullptr, nullptr);
+
+		//Enemy->GetEnemyFSM()->TakeDamage(1000.f);
 	}
 }

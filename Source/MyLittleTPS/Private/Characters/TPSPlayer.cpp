@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/TPSPlayer.h"
@@ -14,7 +14,7 @@
 
 ATPSPlayer::ATPSPlayer()
 {
-	// ÄÄÆ÷³ÍÆ®·Î ¿òÁ÷ÀÏ°Å¶ó¼­ false
+	// ì»´í¬ë„ŒíŠ¸ë¡œ ì›€ì§ì¼ê±°ë¼ì„œ false
 	PrimaryActorTick.bCanEverTick = false;
 
 	auto Collision = Cast<UCapsuleComponent>(RootComponent);
@@ -23,7 +23,7 @@ ATPSPlayer::ATPSPlayer()
 		Collision->SetCollisionProfileName(TEXT("Player"));
 	}
 
-	// SpringArmComponent ¼³Á¤
+	// SpringArmComponent ì„¤ì •
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->TargetArmLength = 200;
 	SpringArmComp->SetRelativeLocation(FVector(0, 100, 100));
@@ -37,7 +37,7 @@ ATPSPlayer::ATPSPlayer()
 	CameraComp->bUsePawnControlRotation = true;
 	bUseControllerRotationYaw = true;
 
-	// ½ºÄÌ·¹Å» ¸Ş½Ã ¼³Á¤
+	// ìŠ¤ì¼ˆë ˆíƒˆ ë©”ì‹œ ì„¤ì •
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny.SKM_Manny'"));
 	if (TempMesh.Succeeded())
 	{
@@ -47,7 +47,7 @@ ATPSPlayer::ATPSPlayer()
 	}
 
 	GunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
-	// °Ç ¸Ş½Ã ¼³Á¤
+	// ê±´ ë©”ì‹œ ì„¤ì •
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempGunMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
 	if (TempGunMesh.Succeeded())
 	{
@@ -63,21 +63,21 @@ ATPSPlayer::ATPSPlayer()
 	GunLight->SetVisibility(false);
 	GunLight->SetupAttachment(GunMesh, TEXT("LightPosition"));
 
-	// ¶óÀÌÆ® »ç¿îµå
+	// ë¼ì´íŠ¸ ì‚¬ìš´ë“œ
 	ConstructorHelpers::FObjectFinder<USoundWave> LightOnSoundTemp(TEXT("/Script/Engine.SoundWave'/Game/Effects/Sounds/LightOn.LightOn'"));
 	if (LightOnSoundTemp.Succeeded()) LightOnSound = LightOnSoundTemp.Object;
 
 	ConstructorHelpers::FObjectFinder<USoundWave> LightOffSoundTemp(TEXT("/Script/Engine.SoundWave'/Game/Effects/Sounds/LightOff.LightOff'"));
 	if (LightOffSoundTemp.Succeeded()) LightOffSound = LightOffSoundTemp.Object;
 
-	// ÀÌµ¿ ´ã´ç ÄÄÆ÷³ÍÆ® ¼ÒÀ¯
+	// ì´ë™ ë‹´ë‹¹ ì»´í¬ë„ŒíŠ¸ ì†Œìœ 
 	MoveComp = CreateDefaultSubobject<UTPSPlayerMoveComponent>(TEXT("MoveComp"));
-	// ÃÑ¾Ë ¹ß»ç ´ã´ç ÄÄÆ÷³ÍÆ® ¼ÒÀ¯
+	// ì´ì•Œ ë°œì‚¬ ë‹´ë‹¹ ì»´í¬ë„ŒíŠ¸ ì†Œìœ 
 	FireComp = CreateDefaultSubobject<UTPSPlayerFireComponent>(TEXT("FireComp"));
-	// ½ºÅ³ ´ã´ç ÄÄÆ÷³ÍÆ® ¼ÒÀ¯
+	// ìŠ¤í‚¬ ë‹´ë‹¹ ì»´í¬ë„ŒíŠ¸ ì†Œìœ 
 	SkillComp = CreateDefaultSubobject<UTPSPlayerSkillComponent>(TEXT("SkillComp"));
 
-	// Á¡ÇÁ µÎ¹øÇØ ^^
+	// ì í”„ ë‘ë²ˆí•´ ^^
 	JumpMaxCount = 2;
 }
 
@@ -97,7 +97,7 @@ void ATPSPlayer::Tick(float DeltaTime)
 void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	// µ¨¸®°ÔÀÌÆ® È£Ãâ
+	// ë¸ë¦¬ê²Œì´íŠ¸ í˜¸ì¶œ
 	InputBindingDelegate.Broadcast(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction(TEXT("LightToggle"), IE_Pressed, this, &ATPSPlayer::LightToggle);

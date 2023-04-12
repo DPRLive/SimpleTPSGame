@@ -19,10 +19,10 @@ ABullet::ABullet()
 
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
 	BoxComp->SetBoxExtent(FVector(8.f, 1.f, 2.f));
-	// Äİ¸®Àü bulletÀ¸·Î ¼³Á¤
+	// ì½œë¦¬ì „ bulletìœ¼ë¡œ ì„¤ì •
 	BoxComp->SetCollisionProfileName(TEXT("Bullet"));
 	BoxComp->SetGenerateOverlapEvents(false);
-	BoxComp->SetNotifyRigidBodyCollision(true); // È÷Æ® ÀÌº¥Æ® »ı¼º
+	BoxComp->SetNotifyRigidBodyCollision(true); // íˆíŠ¸ ì´ë²¤íŠ¸ ìƒì„±
 	SetRootComponent(BoxComp);
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
@@ -32,7 +32,7 @@ ABullet::ABullet()
 		MeshComp->SetStaticMesh(MeshTemp.Object);
 		MeshComp->SetRelativeScale3D(FVector(0.15, 0.15, 0.15));
 		MeshComp->SetRelativeLocationAndRotation(FVector(0, 0, -2.5), FRotator(0, -90, 0));
-		// ½ºÅÂÆ½ Äİ¸®Àü ºñÈ°¼ºÈ­
+		// ìŠ¤íƒœí‹± ì½œë¦¬ì „ ë¹„í™œì„±í™”
 		MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 	MeshComp->SetupAttachment(RootComponent);
@@ -56,18 +56,20 @@ ABullet::ABullet()
 void ABullet::BeginPlay()
 {
 	Super::BeginPlay();
-	// 2ÃÊ µÚ »èÁ¦
+	// 2ì´ˆ ë’¤ ì‚­ì œ
 	SetLifeSpan(2.0f);
 	BoxComp->OnComponentHit.AddDynamic(this, &ABullet::OnBulletHit);
 }
 
 void ABullet::OnBulletHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	auto Enemy = Cast<AEnemy>(OtherActor); // »ó´ë°¡Enemy¸é »èÁ¦ÇØ¹ö¸²
+	auto Enemy = Cast<AEnemy>(OtherActor); // ìƒëŒ€ê°€Enemyë©´ ì‚­ì œí•´ë²„ë¦¼
 	if (Enemy != nullptr)
 	{
 		if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), EnemyHitEmitter, Hit.Location);
-		Enemy->FSM->OnAttackDamage(400);
+		UGameplayStatics::ApplyDamage(Enemy, 400.f, nullptr, nullptr, nullptr);
+
+		//Enemy->GetEnemyFSM()->TakeDamage(400);
 	}
 	else
 	{

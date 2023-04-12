@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Item.h"
@@ -49,31 +49,31 @@ void AItem::AddBall()
 {
 	if (NowBallCount < 5)
 	{
-		// »õ·Î¿î °¢µµ¿¡ µû¸¥ °ø ¹èÄ¡¸¦ À§ÇØ ±âÁ¸ °øµé ´Ù Áö¿ö¹ö¸²
+		// ìƒˆë¡œìš´ ê°ë„ì— ë”°ë¥¸ ê³µ ë°°ì¹˜ë¥¼ ìœ„í•´ ê¸°ì¡´ ê³µë“¤ ë‹¤ ì§€ì›Œë²„ë¦¼
 		TArray<USceneComponent*> ChildArray;
 		RootComponent->GetChildrenComponents(true, ChildArray);
 		for (auto elem : ChildArray)
 		{
-			if(elem->GetName().Contains(TEXT("AudioComponent"), ESearchCase::IgnoreCase)) continue; // ¿Àµğ¿À´Â Áö¿ìÁö ¸»°í
+			if(elem->GetName().Contains(TEXT("AudioComponent"), ESearchCase::IgnoreCase)) continue; // ì˜¤ë””ì˜¤ëŠ” ì§€ìš°ì§€ ë§ê³ 
 			elem->DestroyComponent();
 		}
 		NowBallCount++;
 		FVector Forward = GetActorForwardVector().GetSafeNormal();
 
-		// °ø °¹¼ö·Î ³ª´²¼­ °¢ °øµé »çÀÌÀÇ °¢À» ±¸ÇÔ
+		// ê³µ ê°¯ìˆ˜ë¡œ ë‚˜ëˆ ì„œ ê° ê³µë“¤ ì‚¬ì´ì˜ ê°ì„ êµ¬í•¨
 		float Angle;
 		if (NowBallCount == 0) Angle = 0;
 		else Angle = 360.f / NowBallCount;
 
 		for (uint8 i = 0; i < NowBallCount; i++)
 		{
-			// È¸Àü ±¸ÇØÁÖ´Â ÇÔ¼ö. ¾ğ¸®¾ó ÃÖ°í^^
+			// íšŒì „ êµ¬í•´ì£¼ëŠ” í•¨ìˆ˜. ì–¸ë¦¬ì–¼ ìµœê³ ^^
 			FVector SpawnLocation = Forward.RotateAngleAxis(Angle * i, FVector::UpVector) * RangeRadius;
 			CreateNewBall(SpawnLocation);
 		}
 	}
 
-	// 15ÃÊ ÈÄ¿¡ ÆÄ±«ÇÒ °Çµ¥, ±× Àü¿¡ °ø ¸ÔÀ¸¸é °ø Ãß°¡µÇ°í ´Ù½Ã 15ÃÊ Ä«¿îÆÃ
+	// 15ì´ˆ í›„ì— íŒŒê´´í•  ê±´ë°, ê·¸ ì „ì— ê³µ ë¨¹ìœ¼ë©´ ê³µ ì¶”ê°€ë˜ê³  ë‹¤ì‹œ 15ì´ˆ ì¹´ìš´íŒ…
 	if(GetWorld()->GetTimerManager().IsTimerActive(DestroyTimer))
 	{ 
 		GetWorld()->GetTimerManager().ClearTimer(DestroyTimer);
@@ -113,6 +113,8 @@ void AItem::OnAttackDamage(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEmitter, Enemy->GetActorLocation());
 		if (HitSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, Enemy->GetActorLocation());
 
-		Enemy->FSM->OnAttackDamage(BallDamage);
+		UGameplayStatics::ApplyDamage(Enemy, BallDamage, nullptr, nullptr, nullptr);
+
+		//Enemy->GetEnemyFSM()->TakeDamage(BallDamage);
 	}
 }

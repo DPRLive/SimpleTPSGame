@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "TPSPlayer.generated.h"
 
-// ÀÎÇ² ¹ÙÀÎµùÀ» À§ÇÑ µ¨¸®°ÔÀÌÆ® ¼±¾ğ
+// ì¸í’‹ ë°”ì¸ë”©ì„ ìœ„í•œ ë¸ë¦¬ê²Œì´íŠ¸ ì„ ì–¸
 DECLARE_MULTICAST_DELEGATE_OneParam(FInputBindingDelegate, class UInputComponent*)
 
 UCLASS()
@@ -36,18 +36,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Event)
 		void OnAttackDamage(float Damage);
 
-	// Ä«¸Ş¶ó
+	// ì¹´ë©”ë¼
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		class USpringArmComponent* SpringArmComp;
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		class UCameraComponent* CameraComp;
 
-	// ÃÑ
+	// ì´
 	UPROPERTY(VisibleAnywhere, Category = Gun)
 		USkeletalMeshComponent* GunMesh;
 
-	// ¶óÀÌÆ®
+	// ë¼ì´íŠ¸
 	UPROPERTY(VisibleAnywhere, Category = Gun)
 		class USpotLightComponent* GunLight;
 
@@ -62,15 +62,15 @@ public:
 	UFUNCTION()
 		void LightToggle();
 
-	// ÀÌµ¿´ã´ç ÄÄÆ÷³ÍÆ®
+	// ì´ë™ë‹´ë‹¹ ì»´í¬ë„ŒíŠ¸
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = PlayerComponent)
 		class UTPSPlayerBaseComponent* MoveComp;
 
-	// ÃÑ¾Ë ¹ß»ç ´ã´ç ÄÄÆ÷³ÍÆ®
+	// ì´ì•Œ ë°œì‚¬ ë‹´ë‹¹ ì»´í¬ë„ŒíŠ¸
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = PlayerComponent)
 		class UTPSPlayerBaseComponent* FireComp;
 
-	// ½ºÅ³ ´ã´ç ÄÄÆ÷³ÍÆ®
+	// ìŠ¤í‚¬ ë‹´ë‹¹ ì»´í¬ë„ŒíŠ¸
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = PlayerComponent)
 		class UTPSPlayerBaseComponent* SkillComp;
 };

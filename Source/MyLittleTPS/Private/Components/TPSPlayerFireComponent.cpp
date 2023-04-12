@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Components/TPSPlayerFireComponent.h"
@@ -61,7 +61,7 @@ void UTPSPlayerFireComponent::TickComponent(float DeltaTime, enum ELevelTick Tic
 	float NewFov = FMath::FInterpTo(Player->CameraComp->FieldOfView, TargetFov, DeltaTime, 20.f);
 	Player->CameraComp->FieldOfView = NewFov;
 	
-	// ¹İµ¿ ³Ö±â
+	// ë°˜ë™ ë„£ê¸°
 	if (!RecoilValue.IsZero())
 	{
 		RecoilValue = FMath::Vector2DInterpTo(RecoilValue, FVector2D(0.f), DeltaTime, 12.f);
@@ -82,7 +82,7 @@ void UTPSPlayerFireComponent::BeginPlay()
 
 void UTPSPlayerFireComponent::FireState()
 {
-	if (IsAutoFire) // ¿¬»ç¸é °è¼Ó ¹ß»ç
+	if (IsAutoFire) // ì—°ì‚¬ë©´ ê³„ì† ë°œì‚¬
 	{
 		Fire();
 	}
@@ -92,13 +92,13 @@ void UTPSPlayerFireComponent::ReloadState()
 {
 	if (GunState != EGunState::Idle) return;
 	GunState = EGunState::Reload;
-	// ÀåÀü ¸ğ¼Ç ½ÇÇà
+	// ì¥ì „ ëª¨ì…˜ ì‹¤í–‰
 	Player->PlayAnimMontage(Anim->UpperMontage, 1.0f, TEXT("Reload"));
 }
 
 void UTPSPlayerFireComponent::EndReload(bool Interruption)
 {
-	//Anim Notify·Î ÀåÀü ¸ğ¼Ç ³¡³ª¸é ÀåÀü
+	//Anim Notifyë¡œ ì¥ì „ ëª¨ì…˜ ëë‚˜ë©´ ì¥ì „
 	if(!Interruption) Mag = MaxMag;
 	GunState = EGunState::Idle;
 }
@@ -117,7 +117,7 @@ void UTPSPlayerFireComponent::InputFire()
 
 void UTPSPlayerFireComponent::StopFire()
 {
-	if (GunState != EGunState::Fire) return; // ¹ß»ç »óÅÂ¸¸ ¸ØÃâ¼ö ÀÖ´Ù.
+	if (GunState != EGunState::Fire) return; // ë°œì‚¬ ìƒíƒœë§Œ ë©ˆì¶œìˆ˜ ìˆë‹¤.
 	GunState = EGunState::Idle;
 	RecoilCount = 0;
 }
@@ -132,7 +132,7 @@ void UTPSPlayerFireComponent::Fire()
 		FTransform BulletTrans = Player->GunMesh->GetSocketTransform(TEXT("FirePosition"));
 		if (Player->GetVelocity().Size() > 400.f)
 		{
-			// ´Ş¸®¸é¼­ ½î¸é Á¶ÁØ ±×·±°Å ¾ÈÇÔ
+			// ë‹¬ë¦¬ë©´ì„œ ì˜ë©´ ì¡°ì¤€ ê·¸ëŸ°ê±° ì•ˆí•¨
 			Player->PlayAnimMontage(Anim->UpperMontage, 1.0f, TEXT("FireHip"));
 		}
 		else
@@ -140,16 +140,16 @@ void UTPSPlayerFireComponent::Fire()
 			Player->PlayAnimMontage(Anim->UpperMontage, 1.0f, TEXT("Fire"));
 
 			FVector StartPos = Player->CameraComp->GetComponentLocation();
-			FVector DestActorPos = StartPos + Player->CameraComp->GetForwardVector() * 20000; // 200m±îÁö´Â Àß ½ô
+			FVector DestActorPos = StartPos + Player->CameraComp->GetForwardVector() * 20000; // 200mê¹Œì§€ëŠ” ì˜ ì¨
 			FHitResult Result;
 			FCollisionQueryParams Params;
-			Params.AddIgnoredActor(Player); // ³»°¡ ³»ÃÑ¿¡ ¸ÂÀ»¼ö´Â ¾øÁö
+			Params.AddIgnoredActor(Player); // ë‚´ê°€ ë‚´ì´ì— ë§ì„ìˆ˜ëŠ” ì—†ì§€
 
-			// ¹°Ã¼¸¦ Á¶ÁØÇß´Ù¸é °Å±â¸¦ ¸ñÇ¥·Î Á¶ÁØ
+			// ë¬¼ì²´ë¥¼ ì¡°ì¤€í–ˆë‹¤ë©´ ê±°ê¸°ë¥¼ ëª©í‘œë¡œ ì¡°ì¤€
 			bool bHit = GetWorld()->LineTraceSingleByChannel(Result, StartPos, DestActorPos, ECollisionChannel::ECC_Visibility, Params);
 			if (bHit) DestActorPos = Result.ImpactPoint;
 
-			// ÃÑÀ» ¹ß»çÇÒ Àü¹æ¹æÇâ °è»ê
+			// ì´ì„ ë°œì‚¬í•  ì „ë°©ë°©í–¥ ê³„ì‚°
 			BulletTrans.SetRotation(FQuat(UKismetMathLibrary::FindLookAtRotation(BulletTrans.GetLocation(), DestActorPos)));
 		}
 
@@ -159,7 +159,7 @@ void UTPSPlayerFireComponent::Fire()
 		GetWorld()->SpawnActor<ABullet>(BulletFactory, BulletTrans);
 		CurrentTime = 0;
 
-		// ¹İµ¿ Ãß°¡
+		// ë°˜ë™ ì¶”ê°€
 		AddRecoil();
 	}
 }
@@ -171,7 +171,7 @@ void UTPSPlayerFireComponent::AddRecoil()
 	RecoilValue.X = NewRecoilValue.X;
 	RecoilValue.Y = NewRecoilValue.Y;
 
-	if (IsZoom) // ÁÜ »óÅÂ¸é ¹İµ¿ °¨¼Ò
+	if (IsZoom) // ì¤Œ ìƒíƒœë©´ ë°˜ë™ ê°ì†Œ
 	{
 		RecoilValue.X *= 0.5;
 		RecoilValue.Y *= 0.5;
