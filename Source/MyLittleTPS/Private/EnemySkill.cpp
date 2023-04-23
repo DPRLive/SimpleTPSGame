@@ -50,7 +50,7 @@ void AEnemySkill::OnEnemySkillHit(UPrimitiveComponent* HitComponent, AActor* Oth
 	auto Target = Cast<ATPSPlayer>(OtherActor);
 	if(IsValid(Target))
 	{
-		Target->OnAttackDamage(SkillDamage);
+		UGameplayStatics::ApplyDamage(Target, SkillDamage, nullptr, nullptr, nullptr);
 	}
 	if(IsValid(EnemyHitEmitter)) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), EnemyHitEmitter, Hit.ImpactPoint);
 	Destroy();

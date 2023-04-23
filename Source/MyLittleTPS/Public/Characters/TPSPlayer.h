@@ -16,7 +16,7 @@ class MYLITTLETPS_API ATPSPlayer : public ACharacter
 
 public:
 	ATPSPlayer();
-
+	
 protected:
 	virtual void BeginPlay() override;
 
@@ -26,51 +26,60 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	// 데미지 받았을 때 처리
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Settings)
-		float MaxHp = 1000;
+	// 최대체력
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Settings, meta = (AllowPrivateAccess = "true"))
+	float MaxHp = 1000;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Settings)
-		float Hp;
+	// 현재 체력
+	UPROPERTY(BlueprintReadOnly, Category = Settings,  meta = (AllowPrivateAccess = "true"))
+	float Hp = 0.f;
 
-	UFUNCTION(BlueprintCallable, Category = Event)
-		void OnAttackDamage(float Damage);
-
-	// 카메라
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE class UTPSPlayerBaseComponent* GetFireComp() const { return FireComp; }	
+	FORCEINLINE class UCameraComponent* GetCameraComp() const { return CameraComp; }	
+	FORCEINLINE USkeletalMeshComponent* GetGunMesh() const { return GunMesh; }	
+private:
+	// 카메라 관련
 	UPROPERTY(VisibleAnywhere, Category = Camera)
-		class USpringArmComponent* SpringArmComp;
+	TObjectPtr<class USpringArmComponent> SpringArmComp;
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
-		class UCameraComponent* CameraComp;
+	TObjectPtr<class UCameraComponent> CameraComp;
 
 	// 총
 	UPROPERTY(VisibleAnywhere, Category = Gun)
-		USkeletalMeshComponent* GunMesh;
+	TObjectPtr<USkeletalMeshComponent> GunMesh;
 
 	// 라이트
 	UPROPERTY(VisibleAnywhere, Category = Gun)
-		class USpotLightComponent* GunLight;
+	TObjectPtr<class USpotLightComponent> GunLight;
 
+	// 라이트 키는 소리
 	UPROPERTY(EditDefaultsOnly, Category = Gun)
-		class USoundWave* LightOnSound;
+	TObjectPtr<class USoundWave> LightOnSound;
 
+	// 라이트 끄는 소리
 	UPROPERTY(EditDefaultsOnly, Category = Gun)
-		class USoundWave* LightOffSound;
+	TObjectPtr<class USoundWave> LightOffSound;
 
 	bool bLightOn = false;
 
 	UFUNCTION()
-		void LightToggle();
+	void LightToggle();
 
 	// 이동담당 컴포넌트
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = PlayerComponent)
-		class UTPSPlayerBaseComponent* MoveComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = PlayerComponent, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UTPSPlayerBaseComponent> MoveComp;
 
 	// 총알 발사 담당 컴포넌트
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = PlayerComponent)
-		class UTPSPlayerBaseComponent* FireComp;
+	UPROPERTY(VisibleAnywhere, Category = PlayerComponent)
+	TObjectPtr<class UTPSPlayerBaseComponent> FireComp;
 
 	// 스킬 담당 컴포넌트
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = PlayerComponent)
-		class UTPSPlayerBaseComponent* SkillComp;
+	UPROPERTY(VisibleAnywhere, Category = PlayerComponent)
+	TObjectPtr<class UTPSPlayerBaseComponent> SkillComp;
 };

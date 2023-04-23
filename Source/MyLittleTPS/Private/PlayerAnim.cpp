@@ -45,7 +45,9 @@ void UPlayerAnim::OnEndReload(bool Interruption)
 	auto Player = Cast<ATPSPlayer>(TryGetPawnOwner());
 	if (Player != nullptr)
 	{
-		auto FireComp = Cast<UTPSPlayerFireComponent>(Player->FireComp);
-		FireComp->EndReload(Interruption);
+		if(auto FireComp = Cast<UTPSPlayerFireComponent>(Player->GetFireComp()))
+		{
+			FireComp->EndReload(Interruption);
+		}
 	}
 }

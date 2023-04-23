@@ -19,10 +19,10 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY()
-		class ATPSPlayer* Player;
+	TObjectPtr<class ATPSPlayer> Player;
 	
 	UPROPERTY()
-		class UCharacterMovementComponent* PlayerMoveComp;
+	TObjectPtr<class UCharacterMovementComponent> PlayerMoveComp;
 
 	virtual void InitializeComponent() override;
 

@@ -5,11 +5,14 @@
 #include "Bullet.h"
 #include "Characters/TPSPlayer.h"
 #include "PlayerAnim.h"
+
 #include <Camera/CameraComponent.h>
 #include <Kismet/KismetMathLibrary.h>
 #include <Kismet/GameplayStatics.h>
 #include <Particles/ParticleSystem.h>
 #include <Curves/CurveVector.h>
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(TPSPlayerFireComponent)
 
 UTPSPlayerFireComponent::UTPSPlayerFireComponent()
 {
@@ -56,10 +59,13 @@ void UTPSPlayerFireComponent::TickComponent(float DeltaTime, enum ELevelTick Tic
 		break;
 	}
 
-	// zoom in / zoom out
-	float TargetFov = IsZoom ? 60.f : 90.f;
-	float NewFov = FMath::FInterpTo(Player->CameraComp->FieldOfView, TargetFov, DeltaTime, 20.f);
-	Player->CameraComp->FieldOfView = NewFov;
+	if(const auto PlayerCameraComp = Player->GetCameraComp())
+	{
+		// zoom in / zoom out
+		float TargetFov = IsZoom ? 60.f : 90.f;
+		float NewFov = FMath::FInterpTo(PlayerCameraComp->FieldOfView, TargetFov, DeltaTime, 20.f);
+		PlayerCameraComp->FieldOfView = NewFov;
+	}
 	
 	// 반동 넣기
 	if (!RecoilValue.IsZero())
@@ -108,7 +114,13 @@ void UTPSPlayerFireComponent::InputFire()
 	if (GunState != EGunState::Idle) return;
 	if (Mag <= 0)
 	{
-		if (DryGunSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), DryGunSound, Player->GunMesh->GetComponentLocation());
+		if (DryGunSound != nullptr)
+		{
+			if(const auto PlayerGun = Player->GetGunMesh())
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), DryGunSound, PlayerGun->GetComponentLocation());
+			}
+		}
 		return;
 	}
 	Fire();
@@ -129,18 +141,21 @@ void UTPSPlayerFireComponent::Fire()
 		if (Mag <= 0) return;
 		Mag--;
 
-		FTransform BulletTrans = Player->GunMesh->GetSocketTransform(TEXT("FirePosition"));
+		const auto PlayerGun = Player->GetGunMesh();
+		if(PlayerGun == nullptr) return;
+		
+		FTransform BulletTrans = PlayerGun->GetSocketTransform(TEXT("FirePosition"));
 		if (Player->GetVelocity().Size() > 400.f)
 		{
 			// 달리면서 쏘면 조준 그런거 안함
 			Player->PlayAnimMontage(Anim->UpperMontage, 1.0f, TEXT("FireHip"));
 		}
-		else
+		else if(auto PlayerCamera = Player->GetCameraComp())
 		{
 			Player->PlayAnimMontage(Anim->UpperMontage, 1.0f, TEXT("Fire"));
 
-			FVector StartPos = Player->CameraComp->GetComponentLocation();
-			FVector DestActorPos = StartPos + Player->CameraComp->GetForwardVector() * 20000; // 200m까지는 잘 쏨
+			FVector StartPos = PlayerCamera->GetComponentLocation();
+			FVector DestActorPos = StartPos + PlayerCamera->GetForwardVector() * 20000; // 200m까지는 잘 쏨
 			FHitResult Result;
 			FCollisionQueryParams Params;
 			Params.AddIgnoredActor(Player); // 내가 내총에 맞을수는 없지

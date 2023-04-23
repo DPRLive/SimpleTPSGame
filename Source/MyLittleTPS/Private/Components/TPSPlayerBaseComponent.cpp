@@ -3,7 +3,10 @@
 
 #include "Components/TPSPlayerBaseComponent.h"
 #include "Characters/TPSPlayer.h"
+
 #include <GameFramework/CharacterMovementComponent.h>
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(TPSPlayerBaseComponent)
 
 UTPSPlayerBaseComponent::UTPSPlayerBaseComponent()
 {

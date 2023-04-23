@@ -5,9 +5,11 @@
 #include "Components/EnemyFSM.h"
 #include "Characters/TPSPlayer.h"
 #include "EnemySkill.h"
+
 #include <Components/CapsuleComponent.h>
 #include <Components/BoxComponent.h>
 #include <Kismet/KismetMathLibrary.h>
+#include <Kismet/GameplayStatics.h>
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(Enemy)
 
@@ -91,8 +93,12 @@ void AEnemy::ActivateEnemySkill() // Target의 위치 (플레이어)를 알아�
 {
 	if(IsValid(FSM))
 	{
-		FRotator SkillRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), FSM->Target->GetActorLocation());
-		GetWorld()->SpawnActor<AEnemySkill>(EnemySkill, GetActorLocation(), SkillRotation);
+		auto Target = FSM->GetTarget();
+		if(IsValid(Target))
+		{
+			FRotator SkillRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target->GetActorLocation());
+			GetWorld()->SpawnActor<AEnemySkill>(EnemySkill, GetActorLocation(), SkillRotation);
+		}
 	}
 }
 
@@ -101,6 +107,6 @@ void AEnemy::OnOverlapAttackArea(UPrimitiveComponent* OverlappedComponent, AActo
 	auto Player = Cast<ATPSPlayer>(OtherActor);
 	if (Player != nullptr)
 	{
-		Player->OnAttackDamage(EnemyAttackDamage);
+		UGameplayStatics::ApplyDamage(Player, EnemyAttackDamage, nullptr, nullptr, nullptr);
 	}
 }

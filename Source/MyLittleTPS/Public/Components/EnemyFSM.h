@@ -26,47 +26,46 @@ public:
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	// Target에 대한 Ptr
-	UPROPERTY(Transient)
-	TWeakObjectPtr<class ATPSPlayer> Target;
+	// Animation Play 끝난 후 처리, AnimBP에서 호출
+	UFUNCTION(BlueprintCallable, Category = Event)
+	void OnEndPlayAnim();
 
+	FORCEINLINE class ATPSPlayer* GetTarget() const { return Target.Get(); }
+	
 	// 데미지 받았을때 할 행동
 	void TakeDamage();
 	
 protected:
 	virtual void BeginPlay() override;
 
+private:
+	// Target에 대한 Ptr
+	UPROPERTY(Transient)
+	TWeakObjectPtr<class ATPSPlayer> Target;
+	
 	// 현재 상태를 저장
-	UPROPERTY(BlueprintReadOnly, Transient, Category = State)
+	UPROPERTY(BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	EEnemyState EnemyState;
 
 	// Animation 변경을 위한 AnimMontage
-	UPROPERTY(BlueprintReadOnly, Category = Animation)
-	class UAnimMontage* EnemyMontage;
+	UPROPERTY(EditDefaultsOnly, Category = Animation, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UAnimMontage> EnemyMontage;
 	
-	// Animation Play 끝난 후 처리, AnimBP에서 호출
-	UFUNCTION(BlueprintCallable, Category = Event)
-	void OnEndPlayAnim();
-
-private:
 	// 컴포넌트의 Owner를 형변환하여 저장해둠
-	UPROPERTY(Transient)
-	class AEnemy* Owner;
+	UPROPERTY()
+	TObjectPtr<class AEnemy> Owner;
 	
 	// 컴포넌트의 Owner의 Controller
-	UPROPERTY(Transient)
-	class AAIController* AI;
+	UPROPERTY()
+	TObjectPtr<class AAIController> AI;
 	
 	// AnimPlay 후 바꿀 State
-	UPROPERTY(Transient)
 	EEnemyState DestState = EEnemyState::Move;
 
 	// 죽는 시간 체크
-	UPROPERTY(Transient)
 	float DieTime = 0.f;
 
 	// Trace 간격 시간 체크
-	UPROPERTY(Transient)
 	float TraceInterval = 0.f;
 	
 	// 걷기 속도

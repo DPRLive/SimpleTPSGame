@@ -12,6 +12,8 @@
 #include <Components/CapsuleComponent.h>
 #include <Components/SpotLightComponent.h>
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(TPSPlayer)
+
 ATPSPlayer::ATPSPlayer()
 {
 	// 컴포넌트로 움직일거라서 false
@@ -103,8 +105,11 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAction(TEXT("LightToggle"), IE_Pressed, this, &ATPSPlayer::LightToggle);
 }
 
-void ATPSPlayer::OnAttackDamage(float Damage)
+float ATPSPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
 {
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
 	auto Anim = Cast<UPlayerAnim>(GetMesh()->GetAnimInstance());
 	if (Hp - Damage <= 0)
 	{
@@ -118,6 +123,8 @@ void ATPSPlayer::OnAttackDamage(float Damage)
 		Hp -= Damage;
 		if (Anim != nullptr) PlayAnimMontage(Anim->UpperMontage, 1.2f, FName(TEXT("Hit")));
 	}
+
+	return Damage;
 }
 
 void ATPSPlayer::LightToggle()
