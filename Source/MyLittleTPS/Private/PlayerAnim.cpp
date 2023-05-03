@@ -4,9 +4,10 @@
 #include "PlayerAnim.h"
 #include "Characters/TPSPlayer.h"
 #include "Components/TPSPlayerFireComponent.h"
+
 #include <GameFramework/PawnMovementComponent.h>
-#include <Camera/CameraComponent.h>
-#include <Kismet/KismetMathLibrary.h>
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(PlayerAnim)
 
 UPlayerAnim::UPlayerAnim()
 {

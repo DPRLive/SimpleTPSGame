@@ -12,6 +12,22 @@ class MYLITTLETPS_API UTPSPlayerMoveComponent : public UTPSPlayerBaseComponent
 {
 	GENERATED_BODY()
 
+private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Speed, meta = (AllowPrivateAccess = true))
+	float WalkSpeed = 300.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Speed, meta = (AllowPrivateAccess = true))
+	float RunSpeed = 600.f;
+
+	// Ïπ¥Î©îÎùº Ïù¥Îèô
+	void LookUp(float Value);
+	void TurnRight(float Value);
+
+	// Ïù¥Îèô
+	void MoveForward(float Value);
+	void MoveRight(float Value);
+	void Jump();
+	void Run();
 public:
 	UTPSPlayerMoveComponent();
 
@@ -19,21 +35,4 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void SetupPlayerInput(class UInputComponent* PlayerInputComponent) override;
-public:
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Speed)
-		float WalkSpeed = 300;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Speed)
-		float RunSpeed = 600;
-
-	// ƒ´∏ﬁ∂Û ¿Ãµø
-	void LookUp(float Value);
-	void TurnRight(float Value);
-
-	// ¿Ãµø
-	void MoveForward(float Value);
-	void MoveRight(float Value);
-	void Jump();
-	void Run();
 };

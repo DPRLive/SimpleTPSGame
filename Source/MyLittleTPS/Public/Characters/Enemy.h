@@ -13,37 +13,6 @@ UCLASS()
 class MYLITTLETPS_API AEnemy : public ACharacter
 {
 	GENERATED_BODY()
-
-public:
-	AEnemy();
-
-protected:
-	virtual void BeginPlay() override;
-	
-public:
-	// 죽었을때 처리를 위한 델리게이트
-	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = Event)
-	FEnemyDieDelegate OnEnemyDie; 
-
-	// 데미지 받았을 때 처리
-	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-
-	// FSM Getter
-	UFUNCTION(BlueprintCallable, Category = FSM)
-	FORCEINLINE class UEnemyFSM* GetEnemyFSM() const { return FSM; };
-	
-	// 근거리 공격 시 사용할 무기 범위 체크 ON OFF, Anim BP에서 호출
-	UFUNCTION(BlueprintCallable, Category = Weapon)
-	void AttackAreaOn();
-
-	// 근거리 공격 시 사용할 무기 범위 체크 ON OFF, Anim BP에서 호출
-	UFUNCTION(BlueprintCallable, Category = Weapon)
-	void AttackAreaOff();
-
-	// 스킬 사용 , Anim BP에서 호출
-	UFUNCTION(BlueprintCallable, Category = Skill)
-	void ActivateEnemySkill();
-
 private:
 	// 적 이동 및 행동을 위한 상태머신
 	UPROPERTY()
@@ -75,5 +44,37 @@ private:
 	// 근거리 공격 체크
 	UFUNCTION()
 	void OnOverlapAttackArea(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	
+public:
+	AEnemy();
+
+protected:
+	virtual void BeginPlay() override;
+	
+public:
+	// 죽었을때 처리를 위한 델리게이트
+	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = Event)
+	FEnemyDieDelegate OnEnemyDie; 
+
+	// 데미지 받았을 때 처리
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	// FSM Getter
+	UFUNCTION(BlueprintCallable, Category = FSM)
+	FORCEINLINE class UEnemyFSM* GetEnemyFSM() const { return FSM; };
+	
+	// 근거리 공격 시 사용할 무기 범위 체크 ON OFF, Anim BP에서 호출
+	UFUNCTION(BlueprintCallable, Category = Weapon)
+	void AttackAreaOn();
+
+	// 근거리 공격 시 사용할 무기 범위 체크 ON OFF, Anim BP에서 호출
+	UFUNCTION(BlueprintCallable, Category = Weapon)
+	void AttackAreaOff();
+
+	// 스킬 사용 , Anim BP에서 호출
+	UFUNCTION(BlueprintCallable, Category = Skill)
+	void ActivateEnemySkill();
+
 	
 };

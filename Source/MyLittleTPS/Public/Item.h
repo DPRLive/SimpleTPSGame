@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -10,7 +10,41 @@ UCLASS()
 class MYLITTLETPS_API AItem : public AActor
 {
 	GENERATED_BODY()
+
+private:
+	UPROPERTY(VisibleAnywhere)
+	class USceneComponent* Center;
+
+	UPROPERTY(VisibleAnywhere, Category = Components)
+	class URotatingMovementComponent* RotatingComponent;
+
+	// Í≥µÏùÄ 5Í∞ú ÍπåÏßÄÎßå Ï∂îÍ∞Ä
+	UPROPERTY(EditDefaultsOnly, Category = Settings)
+	uint8 MaxBall = 5;
+
+	uint8 NowBallCount = 0;
+
+	FTimerHandle DestroyTimer;
 	
+	UPROPERTY(EditDefaultsOnly, Category = Settings)
+	float RangeRadius = 200.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Settings)
+	float BallDamage = 400.f;
+
+	// Effects
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+	class UParticleSystem* HitEmitter;
+
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+	class USoundWave* ItemSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+	class USoundWave* HitSound;
+
+	void CreateNewBall(FVector& Location);
+	UFUNCTION()
+	void OnAttackDamage(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 public:	
 	AItem();
 
@@ -20,38 +54,5 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere)
-		class USceneComponent* Center;
-
-	UPROPERTY(VisibleAnywhere, Category = Components)
-		class URotatingMovementComponent* RotatingComponent;
-
-	// ∞¯¿∫ 5∞≥ ±Ó¡ˆ∏∏ √ﬂ∞°
-	UPROPERTY(EditDefaultsOnly, Category = Settings)
-		uint8 MaxBall = 5;
-
-	uint8 NowBallCount = 0;
-
-	UPROPERTY(EditDefaultsOnly, Category = Settings)
-		float RangeRadius = 200.f;
-
-	UPROPERTY(EditDefaultsOnly, Category = Settings)
-		float BallDamage = 400.f;
-
-	FTimerHandle DestroyTimer; 
 	void AddBall();
-	void CreateNewBall(FVector& Location);
-
-	UFUNCTION()
-		void OnAttackDamage(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	// Effects
-	UPROPERTY(EditDefaultsOnly, Category = Effect)
-		class UParticleSystem* HitEmitter;
-
-	UPROPERTY(EditDefaultsOnly, Category = Effect)
-		class USoundWave* ItemSound;
-
-	UPROPERTY(EditDefaultsOnly, Category = Effect)
-		class USoundWave* HitSound;
 };

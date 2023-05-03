@@ -5,8 +5,11 @@
 #include "Characters/TPSPlayer.h"
 #include "Skills/EnergyBombSkill.h"
 #include "SKills/EnergyShootSkill.h"
+
 #include <Kismet/GameplayStatics.h>
 #include <Particles/ParticleSystem.h>
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(TPSPlayerSkillComponent)
 
 UTPSPlayerSkillComponent::UTPSPlayerSkillComponent()
 {
@@ -54,8 +57,7 @@ void UTPSPlayerSkillComponent::ActiveHeal()
 	if (HealEmitter != nullptr) UGameplayStatics::SpawnEmitterAttached(HealEmitter, Player->GetMesh(), NAME_None, FVector(ForceInit), FRotator(ForceInit), FVector(0.5f, 0.5f, 1.f));
 	if (HealSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), HealSound, Player->GetActorLocation());
 
-	if (Player->Hp + 300 > Player->MaxHp) Player->Hp = Player->MaxHp;
-	else Player->Hp += 300;
+	Player->AddHealth(300);
 	// 쿹타임 걸기
 	GetWorld()->GetTimerManager().SetTimer(CoolTimerHandle, 20.f, false);
 }

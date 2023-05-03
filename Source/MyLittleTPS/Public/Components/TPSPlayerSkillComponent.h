@@ -7,7 +7,7 @@
 #include "TPSPlayerSkillComponent.generated.h"
 
 /**
- * 
+ * ìŠ¤í‚¬ 3ê°œ ëª¨ë‘ ì‚¬ìš©ìœ¼ë¡œ ë§Œë“¤ì–´ì•¼í•¨
  */
 UCLASS()
 class MYLITTLETPS_API UTPSPlayerSkillComponent : public UTPSPlayerBaseComponent
@@ -18,7 +18,7 @@ public:
 	UTPSPlayerSkillComponent();
 	virtual void SetupPlayerInput(class UInputComponent* PlayerInputComponent) override;
 
-	uint8 SelectedSkill = 1; // 0 È¸º¹ 1 ±â¹æÃâ 2 Àü¹æ°ø°İ ¿¹Á¤..
+	uint8 SelectedSkill = 1; // 0 íšŒë³µ 1 ê¸°ë°©ì¶œ 2 ì „ë°©ê³µê²© ì˜ˆì •..
 
 	UPROPERTY(EditDefaultsOnly, Category = Bullet)
 		class UParticleSystem* HealEmitter;
@@ -32,7 +32,6 @@ public:
 		float GetCoolTime();
 
 	void Active();
-
 	void ActiveHeal();
 	void ActiveEnergyBomb();
 	void ActiveEnergyShoot();

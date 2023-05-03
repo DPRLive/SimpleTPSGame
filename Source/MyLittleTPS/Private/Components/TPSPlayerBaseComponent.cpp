@@ -24,14 +24,12 @@ void UTPSPlayerBaseComponent::BeginPlay()
 
 void UTPSPlayerBaseComponent::InitializeComponent()
 {
-	// Super 꼭!!!
 	Super::InitializeComponent();
 
 	// Begin Play 전에 Player를 알고 있어야 함.
-	Player = Cast<ATPSPlayer>(GetOwner());
-	if (Player == nullptr) return;
-
-	PlayerMoveComp = Cast<UCharacterMovementComponent>(Player->GetMovementComponent());
-
-	Player->InputBindingDelegate.AddUObject(this, &UTPSPlayerBaseComponent::SetupPlayerInput);
+	if (Player = Cast<ATPSPlayer>(GetOwner()))
+	{
+		PlayerMoveComp = Cast<UCharacterMovementComponent>(Player->GetMovementComponent());
+		Player->InputBindingDelegate.AddUObject(this, &UTPSPlayerBaseComponent::SetupPlayerInput);
+	}
 }

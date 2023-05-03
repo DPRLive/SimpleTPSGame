@@ -20,24 +20,10 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MYLITTLETPS_API UEnemyFSM : public UActorComponent
 {
 	GENERATED_BODY()
-
-public:	
-	UEnemyFSM();
-
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	// Animation Play 끝난 후 처리, AnimBP에서 호출
-	UFUNCTION(BlueprintCallable, Category = Event)
-	void OnEndPlayAnim();
-
-	FORCEINLINE class ATPSPlayer* GetTarget() const { return Target.Get(); }
-	
-	// 데미지 받았을때 할 행동
-	void TakeDamage();
 	
 protected:
 	virtual void BeginPlay() override;
-
+	
 private:
 	// Target에 대한 Ptr
 	UPROPERTY(Transient)
@@ -97,4 +83,18 @@ private:
 	// Target이 가만히 있다면 공격했을때 적중시킬 수 있는 위치인지
 	// Trace를 통해 체크
 	bool IsCanAttackPlayer();
+	
+public:	
+	UEnemyFSM();
+
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	// Animation Play 끝난 후 처리, AnimBP에서 호출
+	UFUNCTION(BlueprintCallable, Category = Event)
+	void OnEndPlayAnim();
+
+	FORCEINLINE class ATPSPlayer* GetTarget() const { return Target.Get(); }
+	
+	// 데미지 받았을때 할 행동
+	void TakeDamage();
 };

@@ -25,16 +25,14 @@ void UEnemyFSM::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	Owner = Cast<AEnemy>(GetOwner());
-	if (Owner != nullptr)
+	if (Owner = Cast<AEnemy>(GetOwner()))
 	{
 		AI = Cast<AAIController>(Owner->GetController());
 		Cast<UCharacterMovementComponent>(Owner->GetMovementComponent())->MaxWalkSpeed = WalkSpeed;
 		Owner->OnEnemyDie.AddDynamic(this, &UEnemyFSM::EnemyDie);
 	}
-
-	auto Actor = UGameplayStatics::GetActorOfClass(GetWorld(), ATPSPlayer::StaticClass());	
-	if (Actor != nullptr)
+	
+	if (auto Actor = UGameplayStatics::GetActorOfClass(GetWorld(), ATPSPlayer::StaticClass()))
 	{
 		Target = Cast<ATPSPlayer>(Actor);
 	}
@@ -132,14 +130,6 @@ void UEnemyFSM::DieState(float DeltaTime)
 	if (DieTime >= 2.f) Owner->Destroy();
 }
 
-void UEnemyFSM::TakeDamage()
-{
-	AI->StopMovement();
-	// 데미지 애니메이션 실행
-	uint8 Rand = FMath::RandRange(0, 2);
-	PlayAnim(FName(*FString::Printf(TEXT("Hit%d"), Rand)), EEnemyState::Move);
-}
-
 void UEnemyFSM::EnemyDie()
 {
 	AI->StopMovement();
@@ -158,11 +148,6 @@ void UEnemyFSM::PlayAnim(const FName& AnimName, EEnemyState NewDestState)
 	DestState = NewDestState;
 }
 
-void UEnemyFSM::OnEndPlayAnim()
-{
-	EnemyState = DestState;
-}
-
 bool UEnemyFSM::IsCanAttackPlayer()
 {
 	FVector TargetDir = Target->GetActorLocation() - Owner->GetActorLocation();
@@ -175,14 +160,14 @@ bool UEnemyFSM::IsCanAttackPlayer()
 	
 	FCollisionShape SweepSphere = FCollisionShape::MakeSphere(50.f); // 50 짜리 크기 공격 할거임
 	//////////////////////////////// trace debug
-	const FName TraceTag("MyTraceTag");
-	GetWorld()->DebugDrawTraceTag = TraceTag;
-	FCollisionQueryParams CollisionParams;
-	CollisionParams.TraceTag = TraceTag;
+	// const FName TraceTag("MyTraceTag");
+	// GetWorld()->DebugDrawTraceTag = TraceTag;
+	// FCollisionQueryParams CollisionParams;
+	// CollisionParams.TraceTag = TraceTag;
 	// /////////////////////////////
 
 	// 스킬 크기만큼 Trace.
-	bool bHit = GetWorld()->SweepSingleByProfile(Result, StartPos, EndPos, FQuat(ForceInit), "EnemySkill", SweepSphere, CollisionParams);
+	bool bHit = GetWorld()->SweepSingleByProfile(Result, StartPos, EndPos, FQuat(ForceInit), "EnemySkill", SweepSphere);
 	if (bHit)
 	{
 		auto Player = Cast<ATPSPlayer>(Result.GetActor());
@@ -190,4 +175,17 @@ bool UEnemyFSM::IsCanAttackPlayer()
 		if (Player != nullptr) return true;
 	}
 	return false;
+}
+
+void UEnemyFSM::TakeDamage()
+{
+	AI->StopMovement();
+	// 데미지 애니메이션 실행
+	uint8 Rand = FMath::RandRange(0, 2);
+	PlayAnim(FName(*FString::Printf(TEXT("Hit%d"), Rand)), EEnemyState::Move);
+}
+
+void UEnemyFSM::OnEndPlayAnim()
+{
+	EnemyState = DestState;
 }

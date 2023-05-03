@@ -83,7 +83,8 @@ void UTPSPlayerFireComponent::BeginPlay()
 	GunState = EGunState::Idle;
 	Mag = MaxMag;
 
-	Anim = Cast<UPlayerAnim>(Player->GetMesh()->GetAnimInstance());
+	if(Player != nullptr)
+		Anim = Cast<UPlayerAnim>(Player->GetMesh()->GetAnimInstance());
 }
 
 void UTPSPlayerFireComponent::FireState()
@@ -99,12 +100,15 @@ void UTPSPlayerFireComponent::ReloadState()
 	if (GunState != EGunState::Idle) return;
 	GunState = EGunState::Reload;
 	// 장전 모션 실행
-	Player->PlayAnimMontage(Anim->UpperMontage, 1.0f, TEXT("Reload"));
+	if(Player && Anim->GetUpperMontage() != nullptr)
+	{
+		Player->PlayAnimMontage(Anim->GetUpperMontage(), 1.0f, TEXT("Reload"));
+	}
 }
 
-void UTPSPlayerFireComponent::EndReload(bool Interruption)
+void UTPSPlayerFireComponent::EndReload(const bool Interruption)
 {
-	//Anim Notify로 장전 모션 끝나면 장전
+	//Anim Notify로 장전 모션이 성공적으로 끝나면 실제 총알을 넣어줌
 	if(!Interruption) Mag = MaxMag;
 	GunState = EGunState::Idle;
 }
@@ -136,7 +140,7 @@ void UTPSPlayerFireComponent::StopFire()
 
 void UTPSPlayerFireComponent::Fire()
 {
-	if (CurrentTime >= (1 / FirePerSeconds))
+	if (CurrentTime >= (1 / FirePerSeconds)) // 연사 속도 조절
 	{
 		if (Mag <= 0) return;
 		Mag--;
@@ -148,19 +152,24 @@ void UTPSPlayerFireComponent::Fire()
 		if (Player->GetVelocity().Size() > 400.f)
 		{
 			// 달리면서 쏘면 조준 그런거 안함
-			Player->PlayAnimMontage(Anim->UpperMontage, 1.0f, TEXT("FireHip"));
+			if(Anim != nullptr && Anim->GetUpperMontage() != nullptr)
+			{
+				Player->PlayAnimMontage(Anim->GetUpperMontage(), 1.0f, TEXT("FireHip"));
+			}
 		}
 		else if(auto PlayerCamera = Player->GetCameraComp())
 		{
-			Player->PlayAnimMontage(Anim->UpperMontage, 1.0f, TEXT("Fire"));
-
+			if(Anim != nullptr && Anim->GetUpperMontage() != nullptr)
+			{
+				Player->PlayAnimMontage(Anim->GetUpperMontage(), 1.0f, TEXT("Fire"));
+			}
 			FVector StartPos = PlayerCamera->GetComponentLocation();
-			FVector DestActorPos = StartPos + PlayerCamera->GetForwardVector() * 20000; // 200m까지는 잘 쏨
+			FVector DestActorPos = StartPos + PlayerCamera->GetForwardVector() * MaxFineSight; // 200m까지는 잘 쏨
 			FHitResult Result;
 			FCollisionQueryParams Params;
-			Params.AddIgnoredActor(Player); // 내가 내총에 맞을수는 없지
+			Params.AddIgnoredActor(Player); // 내가 내총에 맞을수는 없다
 
-			// 물체를 조준했다면 거기를 목표로 조준
+			// LineTrace를 통해 정조준 가능 거리에 있다면 그쪽으로 정확히 날림
 			bool bHit = GetWorld()->LineTraceSingleByChannel(Result, StartPos, DestActorPos, ECollisionChannel::ECC_Visibility, Params);
 			if (bHit) DestActorPos = Result.ImpactPoint;
 

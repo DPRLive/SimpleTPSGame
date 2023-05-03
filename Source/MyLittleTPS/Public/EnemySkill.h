@@ -11,9 +11,7 @@ class MYLITTLETPS_API AEnemySkill : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
-	AEnemySkill();
-
+private:	
 	UPROPERTY(EditAnywhere, Category = Setting)
 	float SkillRadius = 50.f;
 
@@ -21,9 +19,7 @@ public:
 	float SkillSpeed = 1000.f;
 
 	UPROPERTY(EditAnywhere, Category = Setting)
-	float SkillDamage = 100.f;
-protected:
-	virtual void BeginPlay() override;
+	float SkillDamage = 200.f;
 
 	UPROPERTY(VisibleAnywhere, Category = Collision)
 	TObjectPtr<class USphereComponent> Collision;
@@ -36,9 +32,14 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
 	TObjectPtr<class UParticleSystem> EnemyHitEmitter;
-public:	
-	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
 	void OnEnemySkillHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	
+protected:
+	virtual void BeginPlay() override;
+	
+public:
+	AEnemySkill();
+	virtual void Tick(float DeltaTime) override;
 };

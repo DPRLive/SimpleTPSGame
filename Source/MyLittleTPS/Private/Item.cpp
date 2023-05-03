@@ -3,13 +3,15 @@
 
 #include "Item.h"
 #include "Characters/Enemy.h"
-#include "Components/EnemyFSM.h"
+
 #include <Components/SceneComponent.h>
 #include <GameFramework/RotatingMovementComponent.h>
 #include <Components/SphereComponent.h>
 #include <Kismet/GameplayStatics.h>
 #include <Particles/ParticleSystem.h>
 #include <Particles/ParticleSystemComponent.h>
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(Item)
 
 AItem::AItem()
 {
@@ -43,6 +45,41 @@ void AItem::BeginPlay()
 void AItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AItem::CreateNewBall(FVector& Location)
+{
+	auto NewCollision = NewObject<USphereComponent>(this);
+	NewCollision->SetupAttachment(RootComponent);
+	NewCollision->SetSphereRadius(26.f);
+	NewCollision->SetRelativeLocation(Location);
+	NewCollision->SetCollisionProfileName(TEXT("Skill"));
+	NewCollision->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnAttackDamage);
+	NewCollision->RegisterComponent();
+	AddInstanceComponent(NewCollision);
+
+	auto NewBall = NewObject<UParticleSystemComponent>(this);
+	auto ParticleLoad = LoadObject<UParticleSystem>(nullptr, TEXT("/Script/Engine.ParticleSystem'/Game/Effects/P_ItemBall.P_ItemBall'"));
+	if (ParticleLoad != nullptr)
+	{
+		NewBall->SetTemplate(ParticleLoad);
+	}
+	NewBall->SetupAttachment(NewCollision);
+	NewBall->SetRelativeScale3D(FVector(0.8f));
+	NewBall->RegisterComponent();
+	AddInstanceComponent(NewBall);
+}
+
+void AItem::OnAttackDamage(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	auto Enemy = Cast<AEnemy>(OtherActor);
+	if (Enemy != nullptr)
+	{
+		if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEmitter, Enemy->GetActorLocation());
+		if (HitSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, Enemy->GetActorLocation());
+
+		UGameplayStatics::ApplyDamage(Enemy, BallDamage, nullptr, nullptr, nullptr);
+	}
 }
 
 void AItem::AddBall()
@@ -80,41 +117,4 @@ void AItem::AddBall()
 	}
 	GetWorld()->GetTimerManager().SetTimer(DestroyTimer,
 		FTimerDelegate::CreateLambda([this]() {Destroy(); }), 15.f, false);
-}
-
-void AItem::CreateNewBall(FVector& Location)
-{
-	auto NewCollision = NewObject<USphereComponent>(this);
-	NewCollision->SetupAttachment(RootComponent);
-	NewCollision->SetSphereRadius(26.f);
-	NewCollision->SetRelativeLocation(Location);
-	NewCollision->SetCollisionProfileName(TEXT("Skill"));
-	NewCollision->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnAttackDamage);
-	NewCollision->RegisterComponent();
-	AddInstanceComponent(NewCollision);
-
-	auto NewBall = NewObject<UParticleSystemComponent>(this);
-	auto ParticleLoad = LoadObject<UParticleSystem>(nullptr, TEXT("/Script/Engine.ParticleSystem'/Game/Effects/P_ItemBall.P_ItemBall'"));
-	if (ParticleLoad != nullptr)
-	{
-		NewBall->SetTemplate(ParticleLoad);
-	}
-	NewBall->SetupAttachment(NewCollision);
-	NewBall->SetRelativeScale3D(FVector(0.8f));
-	NewBall->RegisterComponent();
-	AddInstanceComponent(NewBall);
-}
-
-void AItem::OnAttackDamage(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	auto Enemy = Cast<AEnemy>(OtherActor);
-	if (Enemy != nullptr)
-	{
-		if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEmitter, Enemy->GetActorLocation());
-		if (HitSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, Enemy->GetActorLocation());
-
-		UGameplayStatics::ApplyDamage(Enemy, BallDamage, nullptr, nullptr, nullptr);
-
-		//Enemy->GetEnemyFSM()->TakeDamage(BallDamage);
-	}
 }

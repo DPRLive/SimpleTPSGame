@@ -6,6 +6,7 @@
 #include "Components/TPSPlayerFireComponent.h"
 #include "Components/TPSPlayerSkillComponent.h"
 #include "PlayerAnim.h"
+
 #include <GameFramework/SpringArmComponent.h>
 #include <Camera/CameraComponent.h>
 #include <Kismet/GameplayStatics.h>
@@ -101,8 +102,17 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	// 델리게이트 호출
 	InputBindingDelegate.Broadcast(PlayerInputComponent);
-
 	PlayerInputComponent->BindAction(TEXT("LightToggle"), IE_Pressed, this, &ATPSPlayer::LightToggle);
+}
+
+void ATPSPlayer::LightToggle()
+{
+	bLightOn = !bLightOn;
+
+	if (bLightOn && (LightOnSound != nullptr)) UGameplayStatics::PlaySoundAtLocation(GetWorld(), LightOnSound, GunMesh->GetSocketLocation(TEXT("LightPosition")));
+	else if (!bLightOn && (LightOffSound != nullptr)) UGameplayStatics::PlaySoundAtLocation(GetWorld(), LightOffSound, GunMesh->GetSocketLocation(TEXT("LightPosition")));
+
+	GunLight->SetVisibility(bLightOn);
 }
 
 float ATPSPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
@@ -116,23 +126,19 @@ float ATPSPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, ACon
 		Hp = 0;
 		Controller->UnPossess();
 		SetActorEnableCollision(false);
-		if(Anim != nullptr) PlayAnimMontage(Anim->FullMontage, 1.0f, FName(TEXT("Death")));
+		if(Anim != nullptr && Anim->GetFullMontage() != nullptr) PlayAnimMontage(Anim->GetFullMontage(), 1.0f, FName(TEXT("Death")));
 	}
 	else
 	{
 		Hp -= Damage;
-		if (Anim != nullptr) PlayAnimMontage(Anim->UpperMontage, 1.2f, FName(TEXT("Hit")));
+		if (Anim != nullptr && Anim->GetUpperMontage() != nullptr) PlayAnimMontage(Anim->GetUpperMontage(), 1.2f, FName(TEXT("Hit")));
 	}
 
 	return Damage;
 }
 
-void ATPSPlayer::LightToggle()
+void ATPSPlayer::AddHealth(const float InHp)
 {
-	bLightOn = !bLightOn;
-
-	if (bLightOn && (LightOnSound != nullptr)) UGameplayStatics::PlaySoundAtLocation(GetWorld(), LightOnSound, GunMesh->GetSocketLocation(TEXT("LightPosition")));
-	else if (!bLightOn && (LightOffSound != nullptr)) UGameplayStatics::PlaySoundAtLocation(GetWorld(), LightOffSound, GunMesh->GetSocketLocation(TEXT("LightPosition")));
-
-	GunLight->SetVisibility(bLightOn);
+	if(Hp + InHp > MaxHp) Hp = MaxHp;
+	else Hp += InHp;
 }

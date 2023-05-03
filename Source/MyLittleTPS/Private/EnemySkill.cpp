@@ -3,12 +3,14 @@
 
 #include "EnemySkill.h"
 #include "Characters/TPSPlayer.h"
+#include "Kismet/GameplayStatics.h"
+
 #include <Components/SphereComponent.h>
 #include <Particles/ParticleSystem.h>
 #include <Particles/ParticleSystemComponent.h>
 #include <GameFramework/ProjectileMovementComponent.h>
 
-#include "Kismet/GameplayStatics.h"
+#include UE_INLINE_GENERATED_CPP_BY_NAME(EnemySkill)
 
 AEnemySkill::AEnemySkill()
 {
@@ -36,6 +38,7 @@ AEnemySkill::AEnemySkill()
 void AEnemySkill::BeginPlay()
 {
 	Super::BeginPlay();
+	SetLifeSpan(20.f);
 	Collision->OnComponentHit.AddDynamic(this, &AEnemySkill::OnEnemySkillHit);
 }
 

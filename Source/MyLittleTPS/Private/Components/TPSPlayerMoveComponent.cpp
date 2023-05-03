@@ -3,13 +3,15 @@
 
 #include "Components/TPSPlayerMoveComponent.h"
 #include "Characters/TPSPlayer.h"
+
 #include <GameFramework/CharacterMovementComponent.h>
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(TPSPlayerMoveComponent)
 
 UTPSPlayerMoveComponent::UTPSPlayerMoveComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
-
 
 void UTPSPlayerMoveComponent::BeginPlay()
 {

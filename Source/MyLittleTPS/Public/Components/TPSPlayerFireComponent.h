@@ -6,9 +6,7 @@
 #include "TPSPlayerBaseComponent.h"
 #include "TPSPlayerFireComponent.generated.h"
 
-/**
- * 
- */
+// 총기 상태에 관한 enum
 UENUM(BlueprintType) 
 enum class EGunState : uint8
 {
@@ -21,64 +19,73 @@ UCLASS()
 class MYLITTLETPS_API UTPSPlayerFireComponent : public UTPSPlayerBaseComponent
 {
 	GENERATED_BODY()
+
+private:
+	// 총 상태 관리
+	EGunState GunState;
+
+	// 생성할 총알
+	UPROPERTY(EditDefaultsOnly, Category = Bullet)
+	TSubclassOf<class ABullet> BulletFactory;
+
+	// 현재 탄창
+	UPROPERTY(BlueprintReadOnly, Category = Bullet, meta=(AllowPrivateAccess = true))
+	uint8 Mag;
+
+	// 효과들
+	UPROPERTY(EditDefaultsOnly, Category = Bullet)
+	class UParticleSystem* GunShootEmitter;
+
+	UPROPERTY(EditDefaultsOnly, Category = Bullet)
+	class USoundWave* FireSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = Bullet)
+	class USoundWave* DryGunSound;
+
+	UPROPERTY()
+	class UPlayerAnim* Anim;
+
+	// 연사 속도
+	UPROPERTY(EditDefaultsOnly, Category = Settings)
+	float FirePerSeconds = 9.25f;
+
+	float CurrentTime = 0;
 	
+	// 탄창 관리
+	UPROPERTY(EditDefaultsOnly, Category = Settings)
+	uint8 MaxMag = 30;
+
+	// 줌인 / 줌아웃
+	bool IsZoom = false;
+
+	// 최대 정조준 가능 거리
+	UPROPERTY(EditDefaultsOnly)
+	float MaxFineSight = 20000.f;
+	
+	// 연사 여부
+	bool IsAutoFire = false;
+	
+	// 반동을 위한 Curve
+	UPROPERTY(EditDefaultsOnly, Category = Recoil)
+	class UCurveVector* RecoilCurve;
+
+	uint8 RecoilCount = 0;
+	FVector2D RecoilValue = FVector2D(ForceInit);
+
+	void FireState();
+	void ReloadState();
+	void InputFire();
+	void StopFire();
+	void Fire();
+	void AddRecoil();
+	void SwapAutoFire();
+	void Zoom();
 public:
 	UTPSPlayerFireComponent();
 
 	virtual void SetupPlayerInput(class UInputComponent* PlayerInputComponent) override;
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void BeginPlay() override;
-	// 총 상태 관리
-	EGunState GunState;
 
-	void FireState();
-	void ReloadState();
-
-	UPROPERTY(EditDefaultsOnly, Category = Bullet)
-		TSubclassOf<class ABullet> BulletFactory;
-	
-	UPROPERTY(BlueprintReadOnly, Category = Bullet)
-		uint8 Mag;
-	
-	UPROPERTY(EditDefaultsOnly, Category = Bullet)
-		class UParticleSystem* GunShootEmitter;
-
-	UPROPERTY(EditDefaultsOnly, Category = Bullet)
-		class USoundWave* FireSound;
-
-	UPROPERTY(EditDefaultsOnly, Category = Bullet)
-		class USoundWave* DryGunSound;
-
-	UPROPERTY()
-		class UPlayerAnim* Anim;
-
-	// 딜레이 체크
-	UPROPERTY(EditDefaultsOnly, Category = Settings)
-		float FirePerSeconds = 9.25f;
-	float CurrentTime = 0;
-
-	// 총 발사
-	bool IsAutoFire = false;
-	void InputFire();
-	void StopFire();
-	void Fire();
-	void SwapAutoFire();
-
-	// 탄창 관리
-	UPROPERTY(EditDefaultsOnly, Category = Settings)
-		uint8 MaxMag = 30;
-
-	void EndReload(bool Interruption);
-	// 줌인 / 줌아웃
-	bool IsZoom = false;
-	void Zoom();
-
-	// 반동
-	UPROPERTY(EditDefaultsOnly, Category = Recoil)
-		class UCurveVector* RecoilCurve;
-
-	uint8 RecoilCount = 0;
-	FVector2D RecoilValue = FVector2D(ForceInit);
-
-	void AddRecoil();
+	void EndReload(const bool Interruption);
 };

@@ -14,34 +14,6 @@ class MYLITTLETPS_API ATPSPlayer : public ACharacter
 {
 	GENERATED_BODY()
 
-public:
-	ATPSPlayer();
-	
-protected:
-	virtual void BeginPlay() override;
-
-public:	
-	FInputBindingDelegate InputBindingDelegate;
-
-	virtual void Tick(float DeltaTime) override;
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
-	// 데미지 받았을 때 처리
-	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-
-	// 최대체력
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Settings, meta = (AllowPrivateAccess = "true"))
-	float MaxHp = 1000;
-
-	// 현재 체력
-	UPROPERTY(BlueprintReadOnly, Category = Settings,  meta = (AllowPrivateAccess = "true"))
-	float Hp = 0.f;
-
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE class UTPSPlayerBaseComponent* GetFireComp() const { return FireComp; }	
-	FORCEINLINE class UCameraComponent* GetCameraComp() const { return CameraComp; }	
-	FORCEINLINE USkeletalMeshComponent* GetGunMesh() const { return GunMesh; }	
 private:
 	// 카메라 관련
 	UPROPERTY(VisibleAnywhere, Category = Camera)
@@ -82,4 +54,34 @@ private:
 	// 스킬 담당 컴포넌트
 	UPROPERTY(VisibleAnywhere, Category = PlayerComponent)
 	TObjectPtr<class UTPSPlayerBaseComponent> SkillComp;
+
+	// 최대체력
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Settings, meta = (AllowPrivateAccess = "true"))
+	float MaxHp = 1000.f;
+
+	// 현재 체력
+	UPROPERTY(BlueprintReadOnly, Category = Settings,  meta = (AllowPrivateAccess = "true"))
+	float Hp = 0.f;
+
+protected:
+	virtual void BeginPlay() override;
+
+public:
+	ATPSPlayer();
+
+	FInputBindingDelegate InputBindingDelegate;
+
+	virtual void Tick(float DeltaTime) override;
+
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	// 데미지 받았을 때 처리
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE class UTPSPlayerBaseComponent* GetFireComp() const { return FireComp; }	
+	FORCEINLINE class UCameraComponent* GetCameraComp() const { return CameraComp; }	
+	FORCEINLINE USkeletalMeshComponent* GetGunMesh() const { return GunMesh; }	
+
+	void AddHealth(const float InHp);
 };

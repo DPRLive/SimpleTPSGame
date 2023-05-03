@@ -2,6 +2,8 @@
 
 
 #include "Bullet.h"
+#include "Characters/Enemy.h"
+
 #include <GameFramework/ProjectileMovementComponent.h>
 #include <Components/BoxComponent.h>
 #include <Components/StaticMeshComponent.h>
@@ -10,8 +12,8 @@
 #include <Materials/Material.h>
 #include <Kismet/KismetMathLibrary.h>
 #include <Components/DecalComponent.h>
-#include "Components/EnemyFSM.h"
-#include "Characters/Enemy.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(Bullet)
 
 ABullet::ABullet()
 {
@@ -68,8 +70,6 @@ void ABullet::OnBulletHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	{
 		if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), EnemyHitEmitter, Hit.Location);
 		UGameplayStatics::ApplyDamage(Enemy, 400.f, nullptr, nullptr, nullptr);
-
-		//Enemy->GetEnemyFSM()->TakeDamage(400);
 	}
 	else
 	{
