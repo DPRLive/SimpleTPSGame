@@ -31,10 +31,7 @@ private:
 	int32 JumpCount = 0;
 
 	UPROPERTY(EditDefaultsOnly, Category = Montage)
-	class UAnimMontage* UpperMontage;
-
-	UPROPERTY(EditDefaultsOnly, Category = Montage)
-	class UAnimMontage* FullMontage;
+	TObjectPtr<class UAnimMontage> UpperMontage;
 
 	UFUNCTION(BlueprintCallable, Category = Event)
 	void OnEndReload(bool Interruption);
@@ -43,6 +40,5 @@ public:
 	UPlayerAnim();
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-	FORCEINLINE UAnimMontage* GetFullMontage() const { return FullMontage; }
 	FORCEINLINE UAnimMontage* GetUpperMontage() const { return UpperMontage; }
 };

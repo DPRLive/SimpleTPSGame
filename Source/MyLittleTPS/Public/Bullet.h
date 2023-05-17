@@ -13,14 +13,14 @@ class MYLITTLETPS_API ABullet : public AActor
 	
 private:	
 	UPROPERTY(VisibleAnywhere, Category = Collision)
-	class UBoxComponent* BoxComp;
+	TObjectPtr<class UBoxComponent> BoxComp;
 
 	UPROPERTY(VisibleAnywhere, Category = Mesh)
-	class UStaticMeshComponent* MeshComp;
-
+	TObjectPtr<class UStaticMeshComponent> MeshComp;
+	
 	// 총알 이동
 	UPROPERTY(VisibleAnywhere, Category = Component)
-	class UProjectileMovementComponent* MoveComp;
+	TObjectPtr<class UProjectileMovementComponent> MoveComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
 	float BulletInitSpeed = 40000.f;
@@ -29,13 +29,13 @@ private:
 	float BulletMaxSpeed = 40000.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-	class UParticleSystem* HitEmitter;
+	TObjectPtr<class UParticleSystem> HitEmitter;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-	class UParticleSystem* EnemyHitEmitter;
+	TObjectPtr<class UParticleSystem> EnemyHitEmitter;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-	class UMaterial* BulletHole;
+	TObjectPtr<class UMaterial> BulletHole;
 
 	UFUNCTION()
 	void OnBulletHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);

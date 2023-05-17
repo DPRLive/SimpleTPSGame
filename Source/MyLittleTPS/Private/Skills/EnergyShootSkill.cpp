@@ -68,6 +68,5 @@ void AEnergyShootSkill::OnBeginOverlapEnemy(UPrimitiveComponent* OverlappedCompo
 		if (SkillHitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SkillHitEmitter, Enemy->GetActorLocation());
 		if (SkillHitSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), SkillHitSound, Enemy->GetActorLocation());
 		UGameplayStatics::ApplyDamage(Enemy, 1000.f, nullptr, nullptr, nullptr);
-		//Enemy->GetEnemyFSM()->TakeDamage(1000.f);
 	}
 }

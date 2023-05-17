@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -19,29 +19,31 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	UPROPERTY(VisibleAnywhere, Category = Collision)
-		class UBoxComponent* SkillRangeCollision;
+	TObjectPtr<class UBoxComponent> SkillRangeCollision;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-		class UParticleSystemComponent* SkillEmitter;
+	TObjectPtr<class UParticleSystemComponent> SkillEmitter;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-		class USoundWave* SkillUseSound;
+	TObjectPtr<class USoundWave> SkillUseSound;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-		class USoundWave* SkillLoopSound;
+	TObjectPtr<class USoundWave> SkillLoopSound;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-		class UParticleSystem* SkillHitEmitter;
+	TObjectPtr<class UParticleSystem> SkillHitEmitter;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-		class USoundWave* SkillHitSound;
+	TObjectPtr<class USoundWave> SkillHitSound;
 
 	UPROPERTY(VisibleAnywhere, Category = Movement)
-		class UProjectileMovementComponent* MoveComp;
+	TObjectPtr<class UProjectileMovementComponent> MoveComp;
 
-	// ¿ÃπÃ≈Õ √ﬂ∞°«œ∏È ¡¡∞⁄¥Á^§—^
+	// overlap Ïù¥Î≤§Ìä∏
 	UFUNCTION()
-		void OnBeginOverlapEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnBeginOverlapEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                         const FHitResult& SweepResult);
 };

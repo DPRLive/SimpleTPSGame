@@ -22,7 +22,9 @@ UTPSPlayerSkillComponent::UTPSPlayerSkillComponent()
 
 void UTPSPlayerSkillComponent::SetupPlayerInput(UInputComponent* PlayerInputComponent)
 {
-	PlayerInputComponent->BindAction(TEXT("ActiveSkill"), IE_Pressed, this, &UTPSPlayerSkillComponent::Active);
+	PlayerInputComponent->BindAction(TEXT("ActiveSkill1"), IE_Pressed, this, &UTPSPlayerSkillComponent::ActiveEnergyShoot);
+	PlayerInputComponent->BindAction(TEXT("ActiveSkill2"), IE_Pressed, this, &UTPSPlayerSkillComponent::ActiveHeal);
+	PlayerInputComponent->BindAction(TEXT("ActiveSkill3"), IE_Pressed, this, &UTPSPlayerSkillComponent::ActiveEnergyBomb);
 }
 
 float UTPSPlayerSkillComponent::GetCoolTime()
@@ -37,18 +39,6 @@ float UTPSPlayerSkillComponent::GetCoolTime()
 void UTPSPlayerSkillComponent::Active()
 {
 	if (GetCoolTime() > 0.f) return;
-	switch (SelectedSkill)
-	{
-	case 0:
-		ActiveHeal();
-		break;
-	case 1:
-		ActiveEnergyBomb();
-		break;
-	case 2:
-		ActiveEnergyShoot();
-		break;
-	}
 }
 
 void UTPSPlayerSkillComponent::ActiveHeal()
@@ -57,7 +47,7 @@ void UTPSPlayerSkillComponent::ActiveHeal()
 	if (HealEmitter != nullptr) UGameplayStatics::SpawnEmitterAttached(HealEmitter, Player->GetMesh(), NAME_None, FVector(ForceInit), FRotator(ForceInit), FVector(0.5f, 0.5f, 1.f));
 	if (HealSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), HealSound, Player->GetActorLocation());
 
-	Player->AddHealth(300);
+	Player->AddHealth(HealthWeight);
 	// 쿹타임 걸기
 	GetWorld()->GetTimerManager().SetTimer(CoolTimerHandle, 20.f, false);
 }

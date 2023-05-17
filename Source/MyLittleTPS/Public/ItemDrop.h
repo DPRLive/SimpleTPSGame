@@ -13,16 +13,16 @@ class MYLITTLETPS_API AItemDrop : public AActor
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Collision)
-	class UBoxComponent* Box;
+	TObjectPtr<class UBoxComponent> Box;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-	class UParticleSystemComponent* ItemPreview;
+	TObjectPtr<class UParticleSystemComponent> ItemPreview;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-	class UParticleSystem* OverlapEmitter;
+	TObjectPtr<class UParticleSystem> OverlapEmitter;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-	class USoundWave* ItemOverlapSound;
+	TObjectPtr<class USoundWave> ItemOverlapSound;
 
 	UFUNCTION()
 	void OnPlayerOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

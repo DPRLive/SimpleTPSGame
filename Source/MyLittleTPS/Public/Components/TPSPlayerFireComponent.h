@@ -34,16 +34,16 @@ private:
 
 	// 효과들
 	UPROPERTY(EditDefaultsOnly, Category = Bullet)
-	class UParticleSystem* GunShootEmitter;
+	TObjectPtr<class UParticleSystem> GunShootEmitter;
 
 	UPROPERTY(EditDefaultsOnly, Category = Bullet)
-	class USoundWave* FireSound;
+	TObjectPtr<class USoundWave> FireSound;
 
 	UPROPERTY(EditDefaultsOnly, Category = Bullet)
-	class USoundWave* DryGunSound;
+	TObjectPtr<class USoundWave> DryGunSound;
 
 	UPROPERTY()
-	class UPlayerAnim* Anim;
+	TObjectPtr<class UPlayerAnim> Anim;
 
 	// 연사 속도
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
@@ -67,7 +67,7 @@ private:
 	
 	// 반동을 위한 Curve
 	UPROPERTY(EditDefaultsOnly, Category = Recoil)
-	class UCurveVector* RecoilCurve;
+	TObjectPtr<class UCurveVector> RecoilCurve;
 
 	uint8 RecoilCount = 0;
 	FVector2D RecoilValue = FVector2D(ForceInit);

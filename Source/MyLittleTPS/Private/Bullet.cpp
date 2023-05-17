@@ -65,7 +65,7 @@ void ABullet::BeginPlay()
 
 void ABullet::OnBulletHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	auto Enemy = Cast<AEnemy>(OtherActor); // 상대가Enemy면 삭제해버림
+	auto Enemy = Cast<AEnemy>(OtherActor); // 상대가 Enemy면 삭제해버림
 	if (Enemy != nullptr)
 	{
 		if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), EnemyHitEmitter, Hit.Location);

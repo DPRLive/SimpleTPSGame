@@ -39,7 +39,8 @@ void AEnemySkill::BeginPlay()
 {
 	Super::BeginPlay();
 	SetLifeSpan(20.f);
-	Collision->OnComponentHit.AddDynamic(this, &AEnemySkill::OnEnemySkillHit);
+	Collision->OnComponentHit.AddDynamic(this, &AEnemySkill::OnSkillHit);
+	Collision->OnComponentBeginOverlap.AddDynamic(this, &AEnemySkill::OnSkillOverlap);
 }
 
 void AEnemySkill::Tick(float DeltaTime)
@@ -48,7 +49,7 @@ void AEnemySkill::Tick(float DeltaTime)
 
 }
 
-void AEnemySkill::OnEnemySkillHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void AEnemySkill::OnSkillHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	auto Target = Cast<ATPSPlayer>(OtherActor);
 	if(IsValid(Target))
@@ -56,6 +57,14 @@ void AEnemySkill::OnEnemySkillHit(UPrimitiveComponent* HitComponent, AActor* Oth
 		UGameplayStatics::ApplyDamage(Target, SkillDamage, nullptr, nullptr, nullptr);
 	}
 	if(IsValid(EnemyHitEmitter)) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), EnemyHitEmitter, Hit.ImpactPoint);
+	Destroy();
+}
+
+void AEnemySkill::OnSkillOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if(IsValid(EnemyHitEmitter))
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), EnemyHitEmitter, GetActorLocation());
 	Destroy();
 }
 

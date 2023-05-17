@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -19,22 +19,24 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	UPROPERTY(VisibleAnywhere, Category = Collision)
-		class USphereComponent* SkillRangeCollision;
+	TObjectPtr<class USphereComponent> SkillRangeCollision;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-		class UParticleSystem* SkillEmitter;
+	TObjectPtr<class UParticleSystem> SkillEmitter;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-		class UParticleSystem* HitEmitter;
+	TObjectPtr<class UParticleSystem> HitEmitter;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-		class USoundWave* SkillSound;
+	TObjectPtr<class USoundWave> SkillSound;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-		class USoundWave* HitSound;
+	TObjectPtr<class USoundWave> HitSound;
 
 	UFUNCTION()
-		void OnBeginOverlapEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnBeginOverlapEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                         const FHitResult& SweepResult);
 };

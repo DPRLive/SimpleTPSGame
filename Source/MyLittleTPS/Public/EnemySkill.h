@@ -19,7 +19,7 @@ private:
 	float SkillSpeed = 1000.f;
 
 	UPROPERTY(EditAnywhere, Category = Setting)
-	float SkillDamage = 200.f;
+	float SkillDamage = 50.f;
 
 	UPROPERTY(VisibleAnywhere, Category = Collision)
 	TObjectPtr<class USphereComponent> Collision;
@@ -33,9 +33,13 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
 	TObjectPtr<class UParticleSystem> EnemyHitEmitter;
 
+	// Hit시 콜백함수
 	UFUNCTION()
-	void OnEnemySkillHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-	
+	void OnSkillHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	// Overlap시 콜백 함수
+	UFUNCTION()
+	void OnSkillOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 protected:
 	virtual void BeginPlay() override;
 	

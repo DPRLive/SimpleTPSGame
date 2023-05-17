@@ -20,7 +20,7 @@ private:
 	
 	// 적 근거리 공격 데미지
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
-	float EnemyAttackDamage = 300.f;
+	float EnemyAttackDamage = 100.f;
 
 	// 적 최대체력
 	UPROPERTY(EditDefaultsOnly, Category = Setting)

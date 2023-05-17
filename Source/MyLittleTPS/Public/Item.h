@@ -13,10 +13,10 @@ class MYLITTLETPS_API AItem : public AActor
 
 private:
 	UPROPERTY(VisibleAnywhere)
-	class USceneComponent* Center;
+	TObjectPtr<class USceneComponent> Center;
 
 	UPROPERTY(VisibleAnywhere, Category = Components)
-	class URotatingMovementComponent* RotatingComponent;
+	TObjectPtr<class URotatingMovementComponent> RotatingComponent;
 
 	// 공은 5개 까지만 추가
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
@@ -30,19 +30,20 @@ private:
 	float RangeRadius = 200.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = Settings)
-	float BallDamage = 400.f;
+	float BallDamage = 550.f;
 
 	// Effects
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-	class UParticleSystem* HitEmitter;
+	TObjectPtr<class UParticleSystem> HitEmitter;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-	class USoundWave* ItemSound;
+	TObjectPtr<class USoundWave> ItemSound;
 
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
-	class USoundWave* HitSound;
+	TObjectPtr<class USoundWave> HitSound;
 
 	void CreateNewBall(FVector& Location);
+	
 	UFUNCTION()
 	void OnAttackDamage(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 public:	

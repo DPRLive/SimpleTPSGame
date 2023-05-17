@@ -55,7 +55,5 @@ void AEnergyBombSkill::OnBeginOverlapEnemy(UPrimitiveComponent* OverlappedCompon
 		if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEmitter, Enemy->GetActorLocation(), FRotator(ForceInit), FVector(2.f));
 		if (HitSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, Enemy->GetActorLocation());
 		UGameplayStatics::ApplyDamage(Enemy, 1000.f, nullptr, nullptr, nullptr);
-
-		//Enemy->GetEnemyFSM()->TakeDamage(1000.f);
 	}
 }

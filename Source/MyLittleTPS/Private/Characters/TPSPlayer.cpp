@@ -80,7 +80,7 @@ ATPSPlayer::ATPSPlayer()
 	// 스킬 담당 컴포넌트 소유
 	SkillComp = CreateDefaultSubobject<UTPSPlayerSkillComponent>(TEXT("SkillComp"));
 
-	// 점프 두번해 ^^
+	// 점프 두번
 	JumpMaxCount = 2;
 }
 
@@ -124,9 +124,13 @@ float ATPSPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, ACon
 	if (Hp - Damage <= 0)
 	{
 		Hp = 0;
-		Controller->UnPossess();
+		
 		SetActorEnableCollision(false);
-		if(Anim != nullptr && Anim->GetFullMontage() != nullptr) PlayAnimMontage(Anim->GetFullMontage(), 1.0f, FName(TEXT("Death")));
+		Controller->UnPossess();
+
+		// 사망시 Ragdoll로 전환
+		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+		GetMesh()->SetSimulatePhysics(true);
 	}
 	else
 	{
