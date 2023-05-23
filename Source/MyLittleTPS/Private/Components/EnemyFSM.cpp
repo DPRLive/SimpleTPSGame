@@ -158,13 +158,7 @@ bool UEnemyFSM::IsCanAttackPlayer()
 	FVector EndPos = StartPos + TargetDir * LDAttackRange;
 	FCollisionQueryParams Params;
 	
-	FCollisionShape SweepSphere = FCollisionShape::MakeSphere(50.f); // 50 짜리 크기 공격 할거임
-	//////////////////////////////// trace debug
-	// const FName TraceTag("MyTraceTag");
-	// GetWorld()->DebugDrawTraceTag = TraceTag;
-	// FCollisionQueryParams CollisionParams;
-	// CollisionParams.TraceTag = TraceTag;
-	// /////////////////////////////
+	FCollisionShape SweepSphere = FCollisionShape::MakeSphere(80.f); // 공격 크기 100 이하 라고 합시다
 
 	// 스킬 크기만큼 Trace.
 	bool bHit = GetWorld()->SweepSingleByProfile(Result, StartPos, EndPos, FQuat(ForceInit), "EnemySkill", SweepSphere);

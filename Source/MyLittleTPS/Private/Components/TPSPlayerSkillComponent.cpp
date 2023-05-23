@@ -27,41 +27,60 @@ void UTPSPlayerSkillComponent::SetupPlayerInput(UInputComponent* PlayerInputComp
 	PlayerInputComponent->BindAction(TEXT("ActiveSkill3"), IE_Pressed, this, &UTPSPlayerSkillComponent::ActiveEnergyBomb);
 }
 
-float UTPSPlayerSkillComponent::GetCoolTime()
+float UTPSPlayerSkillComponent::GetCoolTime(ESkillType InSkillType)
 {
-	if (GetWorld()->GetTimerManager().IsTimerActive(CoolTimerHandle))
+	FTimerHandle* CoolTimerHandle = nullptr;
+
+	switch (InSkillType)
 	{
-		return GetWorld()->GetTimerManager().GetTimerRemaining(CoolTimerHandle);
+	case ESkillType::EnergyShoot:
+		CoolTimerHandle = &CoolTimerHandleEnergyShoot;
+		break;
+	case ESkillType::Heal:
+		CoolTimerHandle = &CoolTimerHandleHeal;
+		break;
+	case ESkillType::EnergyBomb:
+		CoolTimerHandle = &CoolTimerHandleEnergyBomb;
+		break;
+	}
+	
+	if (CoolTimerHandle != nullptr && GetWorld()->GetTimerManager().IsTimerActive(*CoolTimerHandle))
+	{
+		return GetWorld()->GetTimerManager().GetTimerRemaining(*CoolTimerHandle);
 	}
 	return 0.0f;
-}
-
-void UTPSPlayerSkillComponent::Active()
-{
-	if (GetCoolTime() > 0.f) return;
-}
+} 
 
 void UTPSPlayerSkillComponent::ActiveHeal()
 {
+	if(GetCoolTime(ESkillType::Heal) > 0.f) { return; }
+	
 	// 이미터 스폰 + 사운드 재생?
 	if (HealEmitter != nullptr) UGameplayStatics::SpawnEmitterAttached(HealEmitter, Player->GetMesh(), NAME_None, FVector(ForceInit), FRotator(ForceInit), FVector(0.5f, 0.5f, 1.f));
 	if (HealSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), HealSound, Player->GetActorLocation());
 
 	Player->AddHealth(HealthWeight);
 	// 쿹타임 걸기
-	GetWorld()->GetTimerManager().SetTimer(CoolTimerHandle, 20.f, false);
+	GetWorld()->GetTimerManager().SetTimer(CoolTimerHandleHeal, HealCoolTime, false);
+	DelegateSkillActive.ExecuteIfBound(static_cast<uint8>(ESkillType::Heal));
 }
 
 void UTPSPlayerSkillComponent::ActiveEnergyBomb()
 {
+	if(GetCoolTime(ESkillType::EnergyBomb) > 0.f) { return; }
+	
 	GetWorld()->SpawnActor<AEnergyBombSkill>(AEnergyBombSkill::StaticClass(), Player->GetTransform());
 	// 쿹타임 걸기
-	GetWorld()->GetTimerManager().SetTimer(CoolTimerHandle, 30.f, false);
+	GetWorld()->GetTimerManager().SetTimer(CoolTimerHandleEnergyBomb, EnergyBombCoolTime, false);
+	DelegateSkillActive.ExecuteIfBound(static_cast<uint8>(ESkillType::EnergyBomb));
 }
 
 void UTPSPlayerSkillComponent::ActiveEnergyShoot()
 {
+	if(GetCoolTime(ESkillType::EnergyShoot) > 0.f) { return; }
+
 	GetWorld()->SpawnActor<AEnergyShootSkill>(AEnergyShootSkill::StaticClass(), Player->GetTransform());
 	// 쿹타임 걸기
-	GetWorld()->GetTimerManager().SetTimer(CoolTimerHandle, 15.f, false);
+	GetWorld()->GetTimerManager().SetTimer(CoolTimerHandleEnergyShoot, EnergyShootCooltime, false);
+	DelegateSkillActive.ExecuteIfBound(static_cast<uint8>(ESkillType::EnergyShoot));
 }

@@ -102,7 +102,7 @@ void UTPSPlayerFireComponent::ReloadState()
 	// 장전 모션 실행
 	if(Player && Anim->GetUpperMontage() != nullptr)
 	{
-		Player->PlayAnimMontage(Anim->GetUpperMontage(), 1.0f, TEXT("Reload"));
+		Player->PlayAnimMontage(Anim->GetUpperMontage(), 1.5f, TEXT("Reload"));
 	}
 }
 
@@ -205,6 +205,7 @@ void UTPSPlayerFireComponent::AddRecoil()
 void UTPSPlayerFireComponent::SwapAutoFire()
 {
 	IsAutoFire = !IsAutoFire;
+	DelegateSwapFireType.ExecuteIfBound(IsAutoFire);
 }
 
 void UTPSPlayerFireComponent::Zoom()

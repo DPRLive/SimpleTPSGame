@@ -13,7 +13,7 @@ class MYLITTLETPS_API AEnemySkill : public AActor
 	
 private:	
 	UPROPERTY(EditAnywhere, Category = Setting)
-	float SkillRadius = 50.f;
+	float SkillRadius = 80.f;
 
 	UPROPERTY(EditAnywhere, Category = Setting)
 	float SkillSpeed = 1000.f;

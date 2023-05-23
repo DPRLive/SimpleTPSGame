@@ -78,7 +78,7 @@ ATPSPlayer::ATPSPlayer()
 	// 총알 발사 담당 컴포넌트 소유
 	FireComp = CreateDefaultSubobject<UTPSPlayerFireComponent>(TEXT("FireComp"));
 	// 스킬 담당 컴포넌트 소유
-	SkillComp = CreateDefaultSubobject<UTPSPlayerSkillComponent>(TEXT("SkillComp"));
+	PlayerSkillComp = CreateDefaultSubobject<UTPSPlayerSkillComponent>(TEXT("PlayerSkillComp"));
 
 	// 점프 두번
 	JumpMaxCount = 2;
@@ -89,12 +89,6 @@ void ATPSPlayer::BeginPlay()
 	Super::BeginPlay();
 	
 	Hp = MaxHp;
-}
-
-void ATPSPlayer::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -139,6 +133,16 @@ float ATPSPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, ACon
 	}
 
 	return Damage;
+}
+
+UTPSPlayerFireComponent* ATPSPlayer::GetFireComp() const
+{
+	return Cast<UTPSPlayerFireComponent>(FireComp); 
+}
+
+UTPSPlayerSkillComponent* ATPSPlayer::GetSkillComp() const
+{
+	return Cast<UTPSPlayerSkillComponent>(PlayerSkillComp); 
 }
 
 void ATPSPlayer::AddHealth(const float InHp)

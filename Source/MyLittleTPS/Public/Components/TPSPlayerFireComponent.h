@@ -63,6 +63,7 @@ private:
 	float MaxFineSight = 20000.f;
 	
 	// 연사 여부
+	UPROPERTY(BlueprintReadOnly, Category = Bullet, meta=(AllowPrivateAccess = true))
 	bool IsAutoFire = false;
 	
 	// 반동을 위한 Curve
@@ -87,5 +88,8 @@ public:
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void BeginPlay() override;
 
+	DECLARE_DELEGATE_OneParam(FDelegateSwapFireType, bool)
+	FDelegateSwapFireType DelegateSwapFireType;
+	
 	void EndReload(const bool Interruption);
 };

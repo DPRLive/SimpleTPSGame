@@ -11,7 +11,7 @@ class MYLITTLETPS_API ABullet : public AActor
 {
 	GENERATED_BODY()
 	
-private:	
+private:
 	UPROPERTY(VisibleAnywhere, Category = Collision)
 	TObjectPtr<class UBoxComponent> BoxComp;
 

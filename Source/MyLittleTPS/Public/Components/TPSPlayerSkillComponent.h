@@ -6,21 +6,41 @@
 #include "TPSPlayerBaseComponent.h"
 #include "TPSPlayerSkillComponent.generated.h"
 
-/**
- * 스킬 3개 모두 사용으로 만들어야함
- */
+UENUM( BlueprintType )
+enum class ESkillType : uint8
+{
+	EnergyShoot,
+	Heal,
+	EnergyBomb
+};
+
 UCLASS()
 class MYLITTLETPS_API UTPSPlayerSkillComponent : public UTPSPlayerBaseComponent
 {
 	GENERATED_BODY()
 
 public:
-	// TODO : 쿨타임 걸기, 스킬 컴포넌트로 관리할까 ? ? ?
-	// TODO : 귀찮은데 그냥 떄려 박을까 .? ? ?
-	// TODO : 장전시간 줄이기.
+	// Cool timer handle 3개 설정.. 시간 없으니 설계 없이 하나에 다 때려 박자..
+	FTimerHandle CoolTimerHandleHeal, CoolTimerHandleEnergyBomb, CoolTimerHandleEnergyShoot;
+
+	// 스킬 Active를 UI에 알리기 위한 Delegate
+	DECLARE_DELEGATE_OneParam(FDelegateSkillActive, const uint8)
+	FDelegateSkillActive DelegateSkillActive;
+	
 	UTPSPlayerSkillComponent();
+
 	virtual void SetupPlayerInput(class UInputComponent* PlayerInputComponent) override;
-	// 힐량 설정
+
+	UPROPERTY(EditDefaultsOnly)
+	float HealCoolTime = 20.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float EnergyShootCooltime = 8.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float EnergyBombCoolTime = 20.f;
+	
+	// 힐 설정
 	UPROPERTY(EditDefaultsOnly, Category = Skill)
 	float HealthWeight = 300.f;
 	
@@ -30,12 +50,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
 	TObjectPtr<class USoundWave> HealSound;
 
-	FTimerHandle CoolTimerHandle;
-
 	UFUNCTION(BlueprintCallable)
-	float GetCoolTime();
+	float GetCoolTime(ESkillType InSkillType);
 
-	void Active();
 	void ActiveHeal();
 	void ActiveEnergyBomb();
 	void ActiveEnergyShoot();

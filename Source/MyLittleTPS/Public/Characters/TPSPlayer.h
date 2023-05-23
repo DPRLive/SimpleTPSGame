@@ -52,8 +52,8 @@ private:
 	TObjectPtr<class UTPSPlayerBaseComponent> FireComp;
 
 	// 스킬 담당 컴포넌트
-	UPROPERTY(VisibleAnywhere, Category = PlayerComponent)
-	TObjectPtr<class UTPSPlayerBaseComponent> SkillComp;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<class UTPSPlayerBaseComponent> PlayerSkillComp;
 
 	// 최대체력
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Settings, meta = (AllowPrivateAccess = "true"))
@@ -70,16 +70,15 @@ public:
 	ATPSPlayer();
 
 	FInputBindingDelegate InputBindingDelegate;
-
-	virtual void Tick(float DeltaTime) override;
-
+	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	// 데미지 받았을 때 처리
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE class UTPSPlayerBaseComponent* GetFireComp() const { return FireComp; }	
+	FORCEINLINE class UTPSPlayerFireComponent* GetFireComp() const; 
+	FORCEINLINE class UTPSPlayerSkillComponent* GetSkillComp() const;	
 	FORCEINLINE class UCameraComponent* GetCameraComp() const { return CameraComp; }	
 	FORCEINLINE USkeletalMeshComponent* GetGunMesh() const { return GunMesh; }	
 
