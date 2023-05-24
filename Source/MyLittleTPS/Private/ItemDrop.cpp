@@ -41,6 +41,7 @@ void AItemDrop::BeginPlay()
 	Super::BeginPlay();
 	
 	Box->OnComponentBeginOverlap.AddDynamic(this, &AItemDrop::OnPlayerOverlap);
+	SetLifeSpan(20.f); // 20초 동안 안먹으면 삭제
 }
 
 // Called every frame

@@ -58,11 +58,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
 	float WalkSpeed = 500.f;
 
-	// 근거리 공격 범위
+	// 근거리 공격 가능 범위
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
-	float AttackRange = 250.f;
+	float AttackRange = 200.f;
 	
-	// 원거리 공격 범위
+	// 원거리 공격 가능 범위
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
 	float LDAttackRange = 3000.f;
 

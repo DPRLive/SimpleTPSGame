@@ -22,11 +22,15 @@ private:
 
 	// 몬스터 개체 수 관리
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
-	uint32 NumberOfMonstersLimit = 400;
+	uint32 NumberOfMonstersLimit = 150;
 
+	// 현재 몬스터 수
+	UPROPERTY(Transient)
+	uint32 NumberOfMonsters = 0;
+	
 	// 몬스터가 한번 스폰시 스폰될 최소 마릿수
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
-	int32 MinSpawnMonsterNumsPerInterval = 5;
+	int32 MinSpawnMonsterNumsPerInterval = 2;
 
 	// 몬스터가 한번 스폰시 스폰될 최대 마릿수
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
@@ -48,4 +52,8 @@ public:
 	virtual void StartPlay() override;
 
 	virtual void Tick(float DeltaSeconds) override;
+
+	UFUNCTION(BlueprintCallable)
+	void DecreaseNumOfMonster();
+	
 };

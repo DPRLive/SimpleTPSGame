@@ -16,10 +16,10 @@ private:
 	float SkillRadius = 80.f;
 
 	UPROPERTY(EditAnywhere, Category = Setting)
-	float SkillSpeed = 1000.f;
+	float SkillSpeed = 1200.f;
 
 	UPROPERTY(EditAnywhere, Category = Setting)
-	float SkillDamage = 50.f;
+	float SkillDamage = 170.f;
 
 	UPROPERTY(VisibleAnywhere, Category = Collision)
 	TObjectPtr<class USphereComponent> Collision;
