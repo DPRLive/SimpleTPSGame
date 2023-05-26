@@ -77,6 +77,11 @@ float AEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControl
 	return Damage;
 }
 
+AEnemySkill* AEnemy::GetEnemySkillCDO() const
+{
+	return Cast<AEnemySkill>(EnemySkill.GetDefaultObject());
+}
+
 void AEnemy::AttackAreaOn()
 {
 	AttackAreaL->SetCollisionEnabled(ECollisionEnabled::QueryOnly);

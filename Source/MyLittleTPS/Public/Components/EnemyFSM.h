@@ -53,6 +53,9 @@ private:
 
 	// Trace 간격 시간 체크
 	float TraceInterval = 0.f;
+
+	// Enemy Skill의 크기
+	float SkillRadius = 0.f;
 	
 	// 걷기 속도
 	UPROPERTY(EditDefaultsOnly, Category = Setting)

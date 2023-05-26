@@ -46,4 +46,6 @@ protected:
 public:
 	AEnemySkill();
 	virtual void Tick(float DeltaTime) override;
+
+	FORCEINLINE float GetSkillRadius() const { return SkillRadius; }
 };

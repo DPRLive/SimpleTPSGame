@@ -63,6 +63,9 @@ public:
 	// FSM Getter
 	UFUNCTION(BlueprintCallable, Category = FSM)
 	FORCEINLINE class UEnemyFSM* GetEnemyFSM() const { return FSM; };
+
+	// EnemySkill CDO getter
+	class AEnemySkill* GetEnemySkillCDO() const;
 	
 	// 근거리 공격 시 사용할 무기 범위 체크 ON OFF, Anim BP에서 호출
 	UFUNCTION(BlueprintCallable, Category = Weapon)
@@ -75,6 +78,5 @@ public:
 	// 스킬 사용 , Anim BP에서 호출
 	UFUNCTION(BlueprintCallable, Category = Skill)
 	void ActivateEnemySkill();
-
 	
 };

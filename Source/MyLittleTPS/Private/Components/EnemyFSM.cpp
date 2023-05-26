@@ -5,6 +5,7 @@
 #include "Characters/Enemy.h"
 #include "Characters/TPSPlayer.h"
 #include "ItemDrop.h"
+#include "EnemySkill.h"
 
 #include <animation/AnimMontage.h>
 #include <AIController.h>
@@ -38,6 +39,11 @@ void UEnemyFSM::BeginPlay()
 	}
 
 	EnemyState = EEnemyState::Move;
+
+	if(auto EnemySkillCDO = Owner->GetEnemySkillCDO())
+	{
+		SkillRadius = EnemySkillCDO->GetSkillRadius();
+	}
 }
 
 void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -158,7 +164,7 @@ bool UEnemyFSM::IsCanAttackPlayer() const
 	FVector EndPos = StartPos + TargetDir * LDAttackRange;
 	FCollisionQueryParams Params;
 	
-	FCollisionShape SweepSphere = FCollisionShape::MakeSphere(80.f); // 공격 크기 100 이하 라고 합시다
+	FCollisionShape SweepSphere = FCollisionShape::MakeSphere(SkillRadius); // 공격 크기 100 이하 라고 합시다
 
 	// 스킬 크기만큼 Trace.
 	bool bHit = GetWorld()->SweepSingleByProfile(Result, StartPos, EndPos, FQuat(ForceInit), "EnemySkill", SweepSphere);
