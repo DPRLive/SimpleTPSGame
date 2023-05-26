@@ -7,7 +7,9 @@
 #include "TPSPlayer.generated.h"
 
 // 인풋 바인딩을 위한 델리게이트 선언
-DECLARE_MULTICAST_DELEGATE_OneParam(FInputBindingDelegate, class UInputComponent*)
+DECLARE_MULTICAST_DELEGATE_OneParam(FDelegateInputBinding, class UInputComponent*)
+// 캐릭터 사망 처리를 위한 델리게이트 선언.
+DECLARE_DYNAMIC_DELEGATE(FDelegateCharacterDie);
 
 UCLASS()
 class MYLITTLETPS_API ATPSPlayer : public ACharacter
@@ -40,7 +42,6 @@ private:
 
 	bool bLightOn = false;
 
-	UFUNCTION()
 	void LightToggle();
 
 	// 이동담당 컴포넌트
@@ -69,7 +70,8 @@ protected:
 public:
 	ATPSPlayer();
 
-	FInputBindingDelegate InputBindingDelegate;
+	FDelegateInputBinding DelegateInputBinding;
+	FDelegateCharacterDie DelegateCharacterDie;
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	

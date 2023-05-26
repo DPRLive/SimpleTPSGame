@@ -82,7 +82,7 @@ private:
 	// 원거리 공격이 가능한 위치인지,
 	// Target이 가만히 있다면 공격했을때 적중시킬 수 있는 위치인지
 	// Trace를 통해 체크
-	bool IsCanAttackPlayer();
+	bool IsCanAttackPlayer() const;
 	
 public:	
 	UEnemyFSM();

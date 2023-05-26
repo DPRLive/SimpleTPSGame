@@ -30,6 +30,6 @@ void UTPSPlayerBaseComponent::InitializeComponent()
 	if (Player = Cast<ATPSPlayer>(GetOwner()))
 	{
 		PlayerMoveComp = Cast<UCharacterMovementComponent>(Player->GetMovementComponent());
-		Player->InputBindingDelegate.AddUObject(this, &UTPSPlayerBaseComponent::SetupPlayerInput);
+		Player->DelegateInputBinding.AddUObject(this, &UTPSPlayerBaseComponent::SetupPlayerInput);
 	}
 }

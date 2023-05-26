@@ -55,5 +55,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DecreaseNumOfMonster();
-	
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnCharacterDie();
 };

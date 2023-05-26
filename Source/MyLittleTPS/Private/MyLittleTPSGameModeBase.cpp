@@ -3,8 +3,11 @@
 
 #include "MyLittleTPSGameModeBase.h"
 #include "MonsterSpawner.h"
+#include "Characters/TPSPlayer.h"
 
 #include <Kismet/GameplayStatics.h>
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(MyLittleTPSGameModeBase)
 
 AMyLittleTPSGameModeBase::AMyLittleTPSGameModeBase()
 {
@@ -25,6 +28,14 @@ void AMyLittleTPSGameModeBase::StartPlay()
 		if(AMonsterSpawner* SpawnerCast = Cast<AMonsterSpawner>(Spawner))
 		{
 			MonsterSpawners.Add(SpawnerCast);
+		}
+	}
+
+	if(auto PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))
+	{
+		if(auto Player = Cast<ATPSPlayer>(PlayerCharacter))
+		{
+			Player->DelegateCharacterDie.BindUFunction(this, TEXT("OnCharacterDie"));
 		}
 	}
 }

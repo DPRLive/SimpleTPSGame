@@ -95,7 +95,7 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	// 델리게이트 호출
-	InputBindingDelegate.Broadcast(PlayerInputComponent);
+	DelegateInputBinding.Broadcast(PlayerInputComponent);
 	PlayerInputComponent->BindAction(TEXT("LightToggle"), IE_Pressed, this, &ATPSPlayer::LightToggle);
 }
 
@@ -125,6 +125,9 @@ float ATPSPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, ACon
 		// 사망시 Ragdoll로 전환
 		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 		GetMesh()->SetSimulatePhysics(true);
+
+		// 죽음을 알림
+		DelegateCharacterDie.ExecuteIfBound();
 	}
 	else
 	{

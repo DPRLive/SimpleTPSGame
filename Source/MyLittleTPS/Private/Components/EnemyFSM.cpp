@@ -148,7 +148,7 @@ void UEnemyFSM::PlayAnim(const FName& AnimName, EEnemyState NewDestState)
 	DestState = NewDestState;
 }
 
-bool UEnemyFSM::IsCanAttackPlayer()
+bool UEnemyFSM::IsCanAttackPlayer() const
 {
 	FVector TargetDir = Target->GetActorLocation() - Owner->GetActorLocation();
 	TargetDir.Normalize();
