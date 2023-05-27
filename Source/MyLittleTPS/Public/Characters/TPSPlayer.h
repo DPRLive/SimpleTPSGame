@@ -79,8 +79,8 @@ public:
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE class UTPSPlayerFireComponent* GetFireComp() const; 
-	FORCEINLINE class UTPSPlayerSkillComponent* GetSkillComp() const;	
+	class UTPSPlayerFireComponent* GetFireComp() const; 
+	class UTPSPlayerSkillComponent* GetSkillComp() const;	
 	FORCEINLINE class UCameraComponent* GetCameraComp() const { return CameraComp; }	
 	FORCEINLINE USkeletalMeshComponent* GetGunMesh() const { return GunMesh; }	
 

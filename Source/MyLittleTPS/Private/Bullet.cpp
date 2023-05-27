@@ -50,9 +50,6 @@ ABullet::ABullet()
 
 	ConstructorHelpers::FObjectFinder<UParticleSystem> EnemyHitEmitterTemp(TEXT("/Script/Engine.ParticleSystem'/Game/Effects/P_BulletHitEnemy.P_BulletHitEnemy'"));
 	if (EnemyHitEmitterTemp.Succeeded()) EnemyHitEmitter = EnemyHitEmitterTemp.Object;
-
-	ConstructorHelpers::FObjectFinder<UMaterial> BulletHoleTemp(TEXT("/Script/Engine.Material'/Game/Effects/M_BulletHole.M_BulletHole'"));
-	if (BulletHoleTemp.Succeeded()) BulletHole = BulletHoleTemp.Object;
 }
 
 void ABullet::BeginPlay()
