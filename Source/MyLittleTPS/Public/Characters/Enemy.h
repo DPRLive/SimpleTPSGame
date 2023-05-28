@@ -29,6 +29,10 @@ private:
 	// 현재 체력
 	float Hp = 0.f;
 
+	// URO 적용을 위한 TArray
+	UPROPERTY(EditAnywhere, Category = Animation, meta = (AllowPrivateAccess = "true"))
+	TArray<int8> URORates;
+	
 	// 적 스킬, 투사체 형식으로 TSubClassOf를 BP에서 할당받아 Spawn하여 사용 
 	UPROPERTY(EditAnywhere, Category = Skill)
 	TSubclassOf<class AEnemySkill> EnemySkill;
@@ -44,7 +48,6 @@ private:
 	// 근거리 공격 체크
 	UFUNCTION()
 	void OnOverlapAttackArea(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 	
 public:
 	AEnemy();

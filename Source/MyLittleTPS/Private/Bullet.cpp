@@ -66,7 +66,7 @@ void ABullet::OnBulletHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	if (Enemy != nullptr)
 	{
 		if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), EnemyHitEmitter, Hit.Location);
-		UGameplayStatics::ApplyDamage(Enemy, 501.f, nullptr, nullptr, nullptr);
+		UGameplayStatics::ApplyDamage(Enemy, BulletDamage, nullptr, nullptr, nullptr);
 	}
 	else
 	{

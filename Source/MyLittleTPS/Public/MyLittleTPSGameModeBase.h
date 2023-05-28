@@ -22,7 +22,7 @@ private:
 
 	// 몬스터 개체 수 관리
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
-	uint32 NumberOfMonstersLimit = 150;
+	uint32 NumberOfMonstersLimit = 100;
 
 	// 현재 몬스터 수
 	UPROPERTY(Transient)
@@ -30,7 +30,7 @@ private:
 	
 	// 몬스터가 한번 스폰시 스폰될 최소 마릿수
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
-	int32 MinSpawnMonsterNumsPerInterval = 2;
+	int32 MinSpawnMonsterNumsPerInterval = 5;
 
 	// 몬스터가 한번 스폰시 스폰될 최대 마릿수
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
@@ -38,11 +38,11 @@ private:
 
 	// 몬스터 스폰주기 최소 시간
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
-	float MonsterSpawnIntervalMin = 2.f;
+	float MonsterSpawnIntervalMin = 5.f;
 
 	// 몬스터 스폰주기 최대 시간
 	UPROPERTY(EditDefaultsOnly, Category = Setting)
-	float MonsterSpawnIntervalMax = 10.f;
+	float MonsterSpawnIntervalMax = 20.f;
 
 	float MonsterSpawnInterval;
 	float ElapseTime = 0.f;

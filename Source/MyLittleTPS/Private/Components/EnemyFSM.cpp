@@ -87,9 +87,9 @@ void UEnemyFSM::MoveState()
 	}
 	else if (FVector::Distance(Owner->GetActorLocation(), Target->GetActorLocation()) <= LDAttackRange) // 원거리 공격
 	{
-		// 이동하며 1초에 한번씩 트레이스 진행
+		// 이동하며 2초에 한번씩 트레이스 진행
 		bool bCanAttackPlayer = false;
-		if(TraceInterval > 1.f)
+		if(TraceInterval > 2.f)
 		{
 			bCanAttackPlayer = IsCanAttackPlayer();
 			TraceInterval = 0.f;

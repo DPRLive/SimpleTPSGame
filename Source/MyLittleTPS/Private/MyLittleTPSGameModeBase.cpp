@@ -48,14 +48,17 @@ void AMyLittleTPSGameModeBase::Tick(float DeltaSeconds)
 	{
 		// 스폰되는 마릿수는 랜덤
 		uint32 NumOfSpawn = FMath::RandRange(MinSpawnMonsterNumsPerInterval, MaxSpawnMonsterNumsPerInterval);
+
+		// 스폰 위치도 랜덤
+		uint32 SpawnIndex = FMath::RandRange(0, MonsterSpawners.Num() - 1);
 		
 		for (uint32 i = 0; i < NumOfSpawn; ++i)
 		{
 			if(NumberOfMonsters >= NumberOfMonstersLimit) break;
-			
-			// 스폰 위치도 랜덤
-			uint32 SpawnIndex = FMath::RandRange(0, MonsterSpawners.Num() - 1);
 			MonsterSpawners[SpawnIndex]->SpawnMonster();
+			
+			// 겹쳐서 생성 방지
+			SpawnIndex = (SpawnIndex + 1) % MonsterSpawners.Num();
 			NumberOfMonsters++;
 		}
 		

@@ -54,6 +54,21 @@ void AEnemy::BeginPlay()
 	AttackAreaL->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnOverlapAttackArea);
 	AttackAreaR->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnOverlapAttackArea);
 	AttackAreaOff();
+	
+	if(URORates.Num() <= 0) return;
+	
+	if(UActorComponent* SKMComp = GetComponentByClass(USkinnedMeshComponent::StaticClass()))
+	{
+		auto SKMesh =  Cast<USkinnedMeshComponent>(SKMComp);
+		SKMesh->bEnableUpdateRateOptimizations = true;
+		SKMesh->AnimUpdateRateParams->bShouldUseLodMap = true;
+		SKMesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
+
+		for(uint8 i = 0; i < URORates.Num(); i++)
+		{
+			SKMesh->AnimUpdateRateParams->LODToFrameSkipMap.Add(i, URORates[i]);
+		}
+	}
 }
 
 float AEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,

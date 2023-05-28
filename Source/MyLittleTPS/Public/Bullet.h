@@ -12,6 +12,9 @@ class MYLITTLETPS_API ABullet : public AActor
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY(EditDefaultsOnly, Category = Setting, meta = (AllowPrivateAccess = "true"))
+	float BulletDamage = 300.f;
+	
 	UPROPERTY(VisibleAnywhere, Category = Collision)
 	TObjectPtr<class UBoxComponent> BoxComp;
 
