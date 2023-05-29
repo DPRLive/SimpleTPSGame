@@ -33,15 +33,18 @@ private:
 	uint8 Mag;
 
 	// 효과들
-	UPROPERTY(EditDefaultsOnly, Category = Bullet)
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
 	TObjectPtr<class UParticleSystem> GunShootEmitter;
 
-	UPROPERTY(EditDefaultsOnly, Category = Bullet)
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
 	TObjectPtr<class USoundWave> FireSound;
 
-	UPROPERTY(EditDefaultsOnly, Category = Bullet)
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
 	TObjectPtr<class USoundWave> DryGunSound;
 
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+	TObjectPtr<class USoundWave> SwapAutoFireSound;
+	
 	UPROPERTY()
 	TObjectPtr<class UPlayerAnim> Anim;
 

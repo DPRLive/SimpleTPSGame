@@ -17,6 +17,8 @@ class MYLITTLETPS_API ATPSPlayer : public ACharacter
 	GENERATED_BODY()
 
 private:
+	bool IsDie = false;
+	
 	// 카메라 관련
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<class USpringArmComponent> SpringArmComp;
@@ -82,7 +84,8 @@ public:
 	class UTPSPlayerFireComponent* GetFireComp() const; 
 	class UTPSPlayerSkillComponent* GetSkillComp() const;	
 	FORCEINLINE class UCameraComponent* GetCameraComp() const { return CameraComp; }	
-	FORCEINLINE USkeletalMeshComponent* GetGunMesh() const { return GunMesh; }	
+	FORCEINLINE USkeletalMeshComponent* GetGunMesh() const { return GunMesh; }
+	FORCEINLINE bool GetIsDie() const { return IsDie; }
 
 	void AddHealth(const float InHp);
 };

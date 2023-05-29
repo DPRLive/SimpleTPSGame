@@ -118,16 +118,16 @@ float ATPSPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, ACon
 	if (Hp - Damage <= 0)
 	{
 		Hp = 0;
+		IsDie = true;
 		
-		SetActorEnableCollision(false);
-		Controller->UnPossess();
-
 		// 사망시 Ragdoll로 전환
 		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 		GetMesh()->SetSimulatePhysics(true);
 
 		// 죽음을 알림
 		DelegateCharacterDie.ExecuteIfBound();
+		
+		DisableInput(Cast<APlayerController>(GetController()));
 	}
 	else
 	{

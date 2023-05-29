@@ -27,6 +27,9 @@ UTPSPlayerFireComponent::UTPSPlayerFireComponent()
 	ConstructorHelpers::FObjectFinder<USoundWave> DryGunSoundTemp(TEXT("/Script/Engine.SoundWave'/Game/Effects/Sounds/DryGun.DryGun'"));
 	if (DryGunSoundTemp.Succeeded()) DryGunSound = DryGunSoundTemp.Object;
 
+	ConstructorHelpers::FObjectFinder<USoundWave> SwapAutoFireSoundTemp(TEXT("/Script/Engine.SoundWave'/Game/Effects/Sounds/LightOn.LightOn'"));
+	if (SwapAutoFireSoundTemp.Succeeded()) SwapAutoFireSound = SwapAutoFireSoundTemp.Object;
+	
 	ConstructorHelpers::FObjectFinder<UCurveVector> CurveTemp(TEXT("/Script/Engine.CurveVector'/Game/RecoilCurve.RecoilCurve'"));
 	if (CurveTemp.Succeeded()) RecoilCurve = CurveTemp.Object;
 }
@@ -45,6 +48,8 @@ void UTPSPlayerFireComponent::TickComponent(float DeltaTime, enum ELevelTick Tic
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if(Player->GetIsDie()) return;
+	
 	CurrentTime += DeltaTime;
 	RecoilTime += DeltaTime;
 	
@@ -208,6 +213,15 @@ void UTPSPlayerFireComponent::AddRecoil()
 void UTPSPlayerFireComponent::SwapAutoFire()
 {
 	IsAutoFire = !IsAutoFire;
+	
+	if (SwapAutoFireSound != nullptr)
+	{
+		if(const auto PlayerGun = Player->GetGunMesh())
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), SwapAutoFireSound, PlayerGun->GetComponentLocation());
+		}
+	}
+	
 	DelegateSwapFireType.ExecuteIfBound(IsAutoFire);
 }
 

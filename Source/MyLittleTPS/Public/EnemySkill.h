@@ -27,6 +27,12 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Effect)
 	TObjectPtr<class UParticleSystemComponent> WaterBall;
 
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+	TObjectPtr<class USoundWave> EnemySkillDestroySound;
+
+	UPROPERTY(EditDefaultsOnly, Category = Effect)
+	TObjectPtr<class USoundWave> EnemySkillHitToPlayerSound;
+	
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 	TObjectPtr<class UProjectileMovementComponent> MoveComp;
 

@@ -23,6 +23,13 @@ AEnemySkill::AEnemySkill()
 
 	WaterBall = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("WaterBall"));
 	ConstructorHelpers::FObjectFinder<UParticleSystem> WaterBallTemp(TEXT("/Script/Engine.ParticleSystem'/Game/Effects/P_EnemySkill.P_EnemySkill'"));
+
+	ConstructorHelpers::FObjectFinder<USoundWave> EnemySkillDestroySoundTemp(TEXT("/Script/Engine.SoundWave'/Game/Effects/Sounds/EnemySkillDestroy.EnemySkillDestroy'"));
+	if (EnemySkillDestroySoundTemp.Succeeded()) EnemySkillDestroySound = EnemySkillDestroySoundTemp.Object;
+
+	ConstructorHelpers::FObjectFinder<USoundWave> EnemySkillHitToPlayerSoundTemp(TEXT("/Script/Engine.SoundWave'/Game/Effects/Sounds/EnemySkillHitToPlayer.EnemySkillHitToPlayer'"));
+	if (EnemySkillHitToPlayerSoundTemp.Succeeded()) EnemySkillHitToPlayerSound = EnemySkillHitToPlayerSoundTemp.Object;
+	
 	if (WaterBallTemp.Succeeded())
 	{
 		WaterBall->SetTemplate(WaterBallTemp.Object);
@@ -55,6 +62,12 @@ void AEnemySkill::OnSkillHit(UPrimitiveComponent* HitComponent, AActor* OtherAct
 	if(IsValid(Target))
 	{
 		UGameplayStatics::ApplyDamage(Target, SkillDamage, nullptr, nullptr, nullptr);
+		if (EnemySkillHitToPlayerSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), EnemySkillHitToPlayerSound, GetActorLocation(), 1.f, 1.f, 0.2f);
+	}
+	else
+	{
+		// 그냥 벽에 부딪힐때는 작게
+		if (EnemySkillDestroySound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), EnemySkillDestroySound, GetActorLocation(), 0.5f, 1.f, 0.2f);
 	}
 	if(IsValid(EnemyHitEmitter)) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), EnemyHitEmitter, Hit.ImpactPoint);
 	Destroy();
@@ -65,6 +78,11 @@ void AEnemySkill::OnSkillOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 {
 	if(IsValid(EnemyHitEmitter))
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), EnemyHitEmitter, GetActorLocation());
+	
+	if (EnemySkillDestroySound != nullptr)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), EnemySkillDestroySound, GetActorLocation(), 1.f, 1.f, 0.2f);
+	}
 	Destroy();
 }
 

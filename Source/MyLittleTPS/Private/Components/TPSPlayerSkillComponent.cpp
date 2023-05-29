@@ -57,7 +57,7 @@ void UTPSPlayerSkillComponent::ActiveHeal()
 	
 	// 이미터 스폰 + 사운드 재생?
 	if (HealEmitter != nullptr) UGameplayStatics::SpawnEmitterAttached(HealEmitter, Player->GetMesh(), NAME_None, FVector(ForceInit), FRotator(ForceInit), FVector(0.5f, 0.5f, 1.f));
-	if (HealSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), HealSound, Player->GetActorLocation());
+	if (HealSound != nullptr) UGameplayStatics::PlaySoundAtLocation(GetWorld(), HealSound, Player->GetActorLocation(), 1.f, 1.f, 0.2f);
 
 	Player->AddHealth(HealthWeight);
 	// 쿹타임 걸기

@@ -28,15 +28,10 @@ ABullet::ABullet()
 	SetRootComponent(BoxComp);
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
-	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshTemp(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_Pipe.Shape_Pipe'"));
-	if (MeshTemp.Succeeded())
-	{
-		MeshComp->SetStaticMesh(MeshTemp.Object);
-		MeshComp->SetRelativeScale3D(FVector(0.15, 0.15, 0.15));
-		MeshComp->SetRelativeLocationAndRotation(FVector(0, 0, -2.5), FRotator(0, -90, 0));
-		// 스태틱 콜리전 비활성화
-		MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
+	MeshComp->SetRelativeScale3D(FVector(0.15, 0.15, 0.15));
+	MeshComp->SetRelativeLocationAndRotation(FVector(0, 0, -2.5), FRotator(0, -90, 0));
+	// 스태틱 콜리전 비활성화
+	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	MeshComp->SetupAttachment(RootComponent);
 
 	MoveComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MoveComp"));
@@ -71,10 +66,11 @@ void ABullet::OnBulletHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	else
 	{
 		if (HitEmitter != nullptr) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEmitter, Hit.Location);
-		auto Decal = UGameplayStatics::SpawnDecalAttached(BulletHole, FVector(5.f, 5.f, 5.f), OtherComp, NAME_None, Hit.ImpactPoint,
-			UKismetMathLibrary::Conv_VectorToRotator(Hit.ImpactNormal), EAttachLocation::KeepWorldPosition, 5.0f);
-
-		Decal->SetFadeScreenSize(0.001f);
+		if(auto Decal = UGameplayStatics::SpawnDecalAttached(BulletHole, FVector(5.f, 5.f, 5.f), OtherComp, NAME_None, Hit.ImpactPoint,
+			UKismetMathLibrary::Conv_VectorToRotator(Hit.ImpactNormal), EAttachLocation::KeepWorldPosition, 5.0f))
+		{
+			Decal->SetFadeScreenSize(0.001f);
+		}
 	}
 	Destroy();
 }
