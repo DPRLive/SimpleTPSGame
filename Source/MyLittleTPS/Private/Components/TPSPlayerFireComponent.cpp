@@ -46,7 +46,8 @@ void UTPSPlayerFireComponent::TickComponent(float DeltaTime, enum ELevelTick Tic
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	CurrentTime += DeltaTime;
-
+	RecoilTime += DeltaTime;
+	
 	switch (GunState)
 	{
 	case EGunState::Idle:
@@ -68,12 +69,14 @@ void UTPSPlayerFireComponent::TickComponent(float DeltaTime, enum ELevelTick Tic
 	}
 	
 	// 반동 넣기
-	// if (!RecoilValue.IsZero())
-	// {
-	// 	RecoilValue = FMath::Vector2DInterpTo(RecoilValue, FVector2D(0.f), DeltaTime, 12.f);
-	// 	Player->AddControllerYawInput(RecoilValue.X);
-	// 	Player->AddControllerPitchInput(-RecoilValue.Y);
-	// }
+	if (!RecoilValue.IsZero() && RecoilTime >= 0.01f)
+	{
+		RecoilValue = FMath::Vector2DInterpTo(RecoilValue, FVector2D(0.f), DeltaTime, 12.f);
+		Player->AddControllerYawInput(RecoilValue.X);
+		Player->AddControllerPitchInput(-RecoilValue.Y);
+
+		RecoilTime = 0.f;
+	}
 }
 
 void UTPSPlayerFireComponent::BeginPlay()
@@ -200,10 +203,6 @@ void UTPSPlayerFireComponent::AddRecoil()
 		RecoilValue.X *= 0.5;
 		RecoilValue.Y *= 0.5;
 	}
-
-	// 하 왜 안돼
-	Player->AddControllerYawInput(RecoilValue.X);
-	Player->AddControllerPitchInput(-RecoilValue.Y);
 }
 
 void UTPSPlayerFireComponent::SwapAutoFire()

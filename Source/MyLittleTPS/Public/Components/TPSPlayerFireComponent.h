@@ -69,7 +69,8 @@ private:
 	// 반동을 위한 Curve
 	UPROPERTY(EditDefaultsOnly, Category = Recoil)
 	TObjectPtr<class UCurveVector> RecoilCurve;
-
+	
+	float RecoilTime = 0.f;
 	uint8 RecoilCount = 0;
 	FVector2D RecoilValue = FVector2D(ForceInit);
 
