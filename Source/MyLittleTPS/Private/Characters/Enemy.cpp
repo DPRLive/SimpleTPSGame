@@ -113,11 +113,13 @@ void AEnemy::ActivateEnemySkill() // Target의 위치 (플레이어)를 알아�
 {
 	if(IsValid(FSM))
 	{
-		auto Target = FSM->GetTarget();
-		if(IsValid(Target))
+		if(auto Target = FSM->GetTarget())
 		{
 			FRotator SkillRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target->GetActorLocation());
-			GetWorld()->SpawnActor<AEnemySkill>(EnemySkill, GetActorLocation(), SkillRotation);
+			if(EnemySkill != nullptr)
+			{
+				GetWorld()->SpawnActor<AEnemySkill>(EnemySkill, GetActorLocation(), SkillRotation);
+			}
 		}
 	}
 }

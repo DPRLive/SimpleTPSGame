@@ -44,7 +44,7 @@ void AMyLittleTPSGameModeBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	ElapseTime += DeltaSeconds;
-	if(ElapseTime > MonsterSpawnInterval)
+	if(ElapseTime >= MonsterSpawnInterval)
 	{
 		// 스폰되는 마릿수는 랜덤
 		uint32 NumOfSpawn = FMath::RandRange(MinSpawnMonsterNumsPerInterval, MaxSpawnMonsterNumsPerInterval);
