@@ -47,8 +47,6 @@ void UTPSPlayerFireComponent::SetupPlayerInput(UInputComponent* PlayerInputCompo
 void UTPSPlayerFireComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	if(Player->GetIsDie()) return;
 	
 	CurrentTime += DeltaTime;
 	RecoilTime += DeltaTime;

@@ -114,12 +114,9 @@ float ATPSPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, ACon
 {
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
-	auto Anim = Cast<UPlayerAnim>(GetMesh()->GetAnimInstance());
-	if (Hp - Damage <= 0)
+	if (Hp > 0 && Hp - Damage <= 0)
 	{
 		Hp = 0;
-		IsDie = true;
-		
 		// 사망시 Ragdoll로 전환
 		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 		GetMesh()->SetSimulatePhysics(true);
@@ -129,10 +126,17 @@ float ATPSPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, ACon
 		
 		DisableInput(Cast<APlayerController>(GetController()));
 	}
-	else
+	else if(Hp - Damage > 0)
 	{
 		Hp -= Damage;
-		if (Anim != nullptr && Anim->GetUpperMontage() != nullptr) PlayAnimMontage(Anim->GetUpperMontage(), 1.2f, FName(TEXT("Hit")));
+		
+		if (auto Anim = Cast<UPlayerAnim>(GetMesh()->GetAnimInstance()))
+		{
+			if(Anim->GetUpperMontage() != nullptr)
+			{
+				PlayAnimMontage(Anim->GetUpperMontage(), 1.2f, FName(TEXT("Hit")));
+			}
+		}
 	}
 
 	return Damage;
